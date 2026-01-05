@@ -135,7 +135,7 @@ if [ -n "$ROOT_DEV" ]; then
         echo "  Root device: $ROOT_DEV"
         echo "  Target device: $NVME_DEV"
         echo ""
-        echo "You cannot install to the device that contains the running system!"
+        echo "Cannot install to the device that contains the running system!"
         exit 1
     else
         echo "  ✓ Device is not the root filesystem (root: $ROOT_DEV)"

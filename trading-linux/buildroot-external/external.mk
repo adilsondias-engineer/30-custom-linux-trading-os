@@ -11,7 +11,7 @@ override DPDK_SITE = /work/tos/dpdk-25.11
 override DPDK_SITE_METHOD = local
 override DPDK_SOURCE = 
 
-# Disable patches for local DPDK source (patches are for 24.11.1, we're using 25.11)
+# Disable patches for local DPDK source (patches are for 24.11.1, 25.11 is used)
 # Override the patch list to be empty to prevent explicit patches
 override DPDK_PATCH = 
 
@@ -26,7 +26,7 @@ include $(sort $(wildcard $(BR2_EXTERNAL_TRADING_PATH)/package/*/*.mk))
 override DPDK_CONF_OPTS = -Dcpu_instruction_set=generic -Dexamples= -Dtests=false
 
 # Override DPDK patching to skip patches (must be after dpdk.mk is included)
-# The patches in package/dpdk/ are for 24.11.1, but we're using 25.11 from local source
+# The patches in package/dpdk/ are for 24.11.1, but 25.11 from local source is used
 # DPDK 25.11 has different code structure, so patches don't apply
 # Temporarily rename patch files in Buildroot source so they're not found during patching
 define DPDK_SKIP_PATCHES
@@ -52,8 +52,8 @@ endef
 
 # Override DPDK extract to copy from local source directory
 # For SITE_METHOD=local, Buildroot expects the source to be copied to $(@D)
-# NOTE: We must use $(BUILD_DIR)/dpdk-$(DPDK_VERSION) explicitly because
-# $(@D) resolves to the old directory name (dpdk-24.11.1) before our override
+# NOTE: Must use $(BUILD_DIR)/dpdk-$(DPDK_VERSION) explicitly because
+# $(@D) resolves to the old directory name (dpdk-24.11.1) before the override
 define DPDK_EXTRACT_CMDS
 	@echo "Extracting DPDK from local source: /work/tos/dpdk-25.11"
 	@if [ ! -d "/work/tos/dpdk-25.11" ]; then \
@@ -75,11 +75,11 @@ define DPDK_EXTRACT_CMDS
 endef
 
 # Create build directory and .files-list.before files before configure
-# pkg_size_before runs during configure but before PRE_CONFIGURE_HOOKS, so we need
-# to ensure the directory exists. We do this in POST_PREPARE_HOOKS which runs
+# pkg_size_before runs during configure but before PRE_CONFIGURE_HOOKS, so the directory
+# must exist. This is done in POST_PREPARE_HOOKS which runs
 # right before pkg_size_before.
 # NOTE: pkg_size_before uses $(DPDK_DIR) which is $(BUILD_DIR)/dpdk-$(DPDK_VERSION)
-# Since we override DPDK_VERSION to 25.11, we need to create dpdk-25.11 explicitly
+# Since DPDK_VERSION is overridden to 25.11, dpdk-25.11 must be created explicitly
 define DPDK_CREATE_BUILD_DIR
 	@mkdir -p $(BUILD_DIR)/dpdk-$(DPDK_VERSION)
 	@touch $(BUILD_DIR)/dpdk-$(DPDK_VERSION)/.files-list.before \

@@ -41,7 +41,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
         
         # Get filesystem UUID from rootfs image (for ISO)
         # Try to get UUID from ext2/ext4 image if it exists
-        # Note: ISO typically uses SquashFS which doesn't have UUID, so we'll fall back to label search
+        # Note: ISO typically uses SquashFS which doesn't have UUID, so falls back to label search
         ROOT_FS_UUID=""
         if [ -f "$BINARIES_DIR/rootfs.ext2" ]; then
             # Try to get UUID from ext2 image
@@ -51,7 +51,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
             ROOT_FS_UUID=$(tune2fs -l "$BINARIES_DIR/rootfs.ext4" 2>/dev/null | grep "^Filesystem UUID:" | awk '{print $3}' || echo "")
         fi
         
-        # For ISO, if we have a SquashFS rootfs, it doesn't have a UUID, so we'll use label search
+        # For ISO, if SquashFS rootfs exists, it doesn't have a UUID, so label search is used
         if [ -z "$ROOT_FS_UUID" ] && [ -f "$BINARIES_DIR/rootfs.squashfs" ]; then
             echo "Note: ISO uses SquashFS rootfs (no UUID), will use label search"
         fi
@@ -92,7 +92,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
             else
                 # Fallback: use label (for ISO boot)
                 echo "Warning: Using label for root filesystem grub.cfg (ISO boot)"
-                # For ISO, we can use the label "tradingfs" in kernel command line
+                # For ISO, the label "tradingfs" is used in kernel command line
                 sed -i "s/root=PARTUUID=\$ROOT_UUID/root=LABEL=tradingfs/g" "$TARGET_DIR/boot/grub/grub.cfg"
                 echo "✓ Changed kernel command line to use LABEL=tradingfs for ISO boot"
             fi
@@ -243,7 +243,7 @@ if [ -d "$TARGET_DIR/etc/ld.so.conf.d" ]; then
     
     if [ -n "$LDCONFIG_PATH" ]; then
         # Run ldconfig in chroot (requires fakeroot environment)
-        # Since we're in fakeroot, we can use chroot
+        # Since running in fakeroot, chroot is used
         chroot "$TARGET_DIR" "$LDCONFIG_PATH" 2>/dev/null || {
             echo "Warning: ldconfig failed (will run on first boot via systemd service)"
             # Ensure paths exist
@@ -416,7 +416,7 @@ fi
 
 # Install development tools on target (cmake and GCC)
 # Buildroot removes cmake from target by default, and GCC compiler is not installed
-# We need to copy them back/over for on-target development and debugging
+# These are copied back/over for on-target development and debugging
 if [ -z "$HOST_DIR" ]; then
     if [ -d "$BASE_DIR/output/host" ]; then
         HOST_DIR="$BASE_DIR/output/host"
@@ -441,7 +441,7 @@ if [ -n "$HOST_DIR" ] && [ -d "$HOST_DIR" ]; then
     
     # 2. Copy GCC compiler binaries to target
     # Buildroot's toolchain wrapper is complex and expects specific directory structure
-    # Instead, we'll copy the .br_real binaries directly and create simple shell script wrappers
+    # Instead, .br_real binaries are copied directly and simple shell script wrappers are created
     echo "Copying GCC compiler to target..."
     mkdir -p "$TARGET_DIR/usr/bin"
     
@@ -513,7 +513,7 @@ if [ -n "$HOST_DIR" ] && [ -d "$HOST_DIR" ]; then
 fi
 
 # Configure EGL/GBM to use NVIDIA proprietary driver instead of Mesa/nouveau
-# Mesa's libEGL.so and libgbm.so try to use nouveau, but we need NVIDIA's driver
+# Mesa's libEGL.so and libgbm.so try to use nouveau, but NVIDIA's driver is required
 echo "Configuring EGL/GBM to use NVIDIA proprietary driver instead of Mesa/nouveau..."
 
 # Replace Mesa's libEGL.so with NVIDIA's implementation
@@ -538,7 +538,7 @@ if [ -f "$TARGET_DIR/usr/lib/libEGL_nvidia.so.590.48.01" ]; then
     fi
 fi
 
-# For GBM, we need to keep Mesa's libgbm.so (it provides the GBM API)
+# For GBM, Mesa's libgbm.so is kept (it provides the GBM API)
 # but configure it to use NVIDIA's backend via libnvidia-egl-gbm.so
 # The key is to ensure nouveau kernel module is not loaded and
 # set environment variables to force NVIDIA
