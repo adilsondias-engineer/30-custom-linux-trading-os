@@ -1,0 +1,5 @@
+PermitRootLogin no
+PasswordAuthentication yes # Key-only
+PubkeyAuthentication yes
+X11Forwarding no
+AllowTcpForwarding yes

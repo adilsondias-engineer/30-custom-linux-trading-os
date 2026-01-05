@@ -1,0 +1,4 @@
+# Trading user with access to device groups AND sudo (wheel group)
+# Note: Use /bin/sh for Busybox-based systems (not /bin/bash)
+# Format: username uid group gid password home shell groups comment
+trading 1000 trading 1000 = /home/trading /bin/sh video,dialout,input,wheel Trading User

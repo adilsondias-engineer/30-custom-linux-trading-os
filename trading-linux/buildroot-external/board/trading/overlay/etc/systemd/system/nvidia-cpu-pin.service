@@ -1,0 +1,13 @@
+[Unit]
+Description=Pin NVIDIA processes to system CPUs
+After=nvidia-modprobe.service
+Wants=nvidia-modprobe.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/trading/bin/pin_nvidia.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

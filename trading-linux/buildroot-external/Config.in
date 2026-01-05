@@ -1,0 +1,6 @@
+menu "Trading System Configuration"
+
+source "$BR2_EXTERNAL_TRADING_PATH/package/Config.in"
+
+endmenu
+

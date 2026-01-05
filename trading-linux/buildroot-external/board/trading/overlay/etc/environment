@@ -1,0 +1,7 @@
+# System-wide environment variables
+# This file is read by systemd services and PAM sessions
+
+# SDL2 environment variables for KMSDRM support
+SDL_VIDEODRIVER=kmsdrm
+SDL_RENDER_DRIVER=opengles2
+

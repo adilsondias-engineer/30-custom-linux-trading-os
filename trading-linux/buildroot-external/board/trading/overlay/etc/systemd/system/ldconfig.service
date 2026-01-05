@@ -1,0 +1,15 @@
+[Unit]
+Description=Update dynamic linker cache
+After=local-fs.target
+Before=sysinit.target
+
+[Service]
+Type=oneshot
+# Try sbin first, then usr/sbin (Buildroot merged /usr layout)
+ExecStart=/bin/sh -c 'if [ -x /sbin/ldconfig ]; then /sbin/ldconfig; elif [ -x /usr/sbin/ldconfig ]; then /usr/sbin/ldconfig; else echo "ldconfig not found - libraries will be found via LD_LIBRARY_PATH"; fi'
+RemainAfterExit=yes
+StandardOutput=journal
+
+[Install]
+WantedBy=sysinit.target
+

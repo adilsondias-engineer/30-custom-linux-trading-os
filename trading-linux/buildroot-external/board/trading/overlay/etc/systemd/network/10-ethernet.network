@@ -1,0 +1,10 @@
+# /etc/systemd/network/10-ethernet.network
+[Match]
+Name=enp7s0  # Intel I226-V interface name
+
+[Network]
+DHCP=yes
+# Or static:
+# Address=192.168.1.100/24
+# Gateway=192.168.1.1
+# DNS=8.8.8.8

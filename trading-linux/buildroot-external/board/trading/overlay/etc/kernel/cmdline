@@ -1,0 +1,7 @@
+# /etc/kernel/cmdline or GRUB
+isolcpus=4-23 nohz_full=4-23 rcu_nocbs=4-23
+intel_pstate=performance
+mitigations=off
+transparent_hugepage=never
+# IOMMU/VFIO support for DPDK kernel bypass (required for vfio-pci)
+intel_iommu=on iommu=pt

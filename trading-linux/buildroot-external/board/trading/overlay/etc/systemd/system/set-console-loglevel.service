@@ -1,0 +1,14 @@
+[Unit]
+Description=Set Console Log Level to Suppress Driver Messages
+After=basic.target
+Before=sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/trading/bin/set_console_loglevel.sh
+RemainAfterExit=yes
+StandardOutput=journal
+
+[Install]
+WantedBy=sysinit.target
+

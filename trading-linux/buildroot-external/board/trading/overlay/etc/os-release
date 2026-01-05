@@ -1,0 +1,8 @@
+#os-release
+NAME="Trading OS"
+VERSION="2025.12.0"
+PRETTY_NAME="Trading OS 2025.12"
+ID=tradingos
+VERSION_ID="2025.12"
+HOME_URL="https://github.com/adilsondias-engineer/fpga-trading-systems"
+BUG_REPORT_URL="https://github.com/adilsondias-engineer/fpga-trading-systems"

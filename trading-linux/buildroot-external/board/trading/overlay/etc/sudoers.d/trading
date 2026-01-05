@@ -1,0 +1,2 @@
+# Allow wheel group to run any command (prompts for password)
+%wheel ALL=(ALL:ALL) ALL
