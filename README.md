@@ -108,7 +108,7 @@ Build produces:
 
 ## Deployment
 
-See [docs/TRADINGOS.md](TRADINGOS.md) for detailed deployment instructions, including:
+See [docs/TRADINGOS.md](docs/TRADINGOS.md) for detailed deployment instructions, including:
 - NVMe installation procedure
 - GRUB EFI configuration
 - Systemd service setup
@@ -123,5 +123,5 @@ See [docs/TRADINGOS.md](TRADINGOS.md) for detailed deployment instructions, incl
 
 ---
 
-**Detailed Documentation:** See [docs/TRADINGOS.md](TRADINGOS.md) for complete technical specifications, kernel configuration, package details, and deployment procedures.
+**Detailed Documentation:** See [docs/TRADINGOS.md](docs/TRADINGOS.md) for complete technical specifications, kernel configuration, package details, and deployment procedures.
 
