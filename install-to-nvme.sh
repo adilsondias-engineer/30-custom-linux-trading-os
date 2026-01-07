@@ -87,7 +87,7 @@ if [ -n "$MOUNTED_PARTS" ]; then
     echo "  sudo umount ${NVME_DEV}p*"
     exit 1
 else
-    echo "  ✓ No partitions are mounted"
+    echo "  No partitions are mounted"
 fi
 
 # 6. Check if device is in use by any process
@@ -105,7 +105,7 @@ if command -v lsof >/dev/null 2>&1; then
             exit 1
         fi
     else
-        echo "  ✓ Device is not in use"
+        echo "  Device is not in use"
     fi
 fi
 
@@ -138,7 +138,7 @@ if [ -n "$ROOT_DEV" ]; then
         echo "Cannot install to the device that contains the running system!"
         exit 1
     else
-        echo "  ✓ Device is not the root filesystem (root: $ROOT_DEV)"
+        echo "  Device is not the root filesystem (root: $ROOT_DEV)"
     fi
 fi
 
@@ -198,7 +198,7 @@ echo "Rootfs image:  $ROOTFS_IMAGE"
 echo "Kernel:        $KERNEL_IMAGE"
 echo ""
 echo "=========================================="
-echo "⚠️  CRITICAL WARNING ⚠️"
+echo "CRITICAL WARNING"
 echo "=========================================="
 echo "This will COMPLETELY ERASE all data on:"
 echo "  $NVME_DEV"
@@ -273,20 +273,20 @@ if [ -d "$OVERLAY_GRUB_DIR" ]; then
     # Copy logo
     if [ -f "$OVERLAY_GRUB_DIR/logo.png" ]; then
         cp "$OVERLAY_GRUB_DIR/logo.png" "$MOUNT_ROOT/boot/grub/logo.png"
-        echo "  ✓ Copied GRUB logo"
+        echo "  Copied GRUB logo"
     fi
     
     # Copy font file
     if [ -f "$OVERLAY_GRUB_DIR/unicode.pf2" ]; then
         cp "$OVERLAY_GRUB_DIR/unicode.pf2" "$MOUNT_ROOT/boot/grub/unicode.pf2"
-        echo "  ✓ Copied GRUB font file"
+        echo "  Copied GRUB font file"
     fi
     
     # Copy fonts directory
     if [ -d "$OVERLAY_GRUB_DIR/fonts" ]; then
         mkdir -p "$MOUNT_ROOT/boot/grub/fonts"
         cp -r "$OVERLAY_GRUB_DIR/fonts"/* "$MOUNT_ROOT/boot/grub/fonts/" 2>/dev/null || true
-        echo "  ✓ Copied GRUB fonts directory"
+        echo "  Copied GRUB fonts directory"
     fi
     
     # Copy locale directory
@@ -295,7 +295,7 @@ if [ -d "$OVERLAY_GRUB_DIR" ]; then
         cp -r "$OVERLAY_GRUB_DIR/locale"/* "$MOUNT_ROOT/boot/grub/locale/" 2>/dev/null || true
         LOCALE_COUNT=$(ls -1 "$MOUNT_ROOT/boot/grub/locale"/*.mo 2>/dev/null | wc -l)
         if [ "$LOCALE_COUNT" -gt 0 ]; then
-            echo "  ✓ Copied $LOCALE_COUNT locale files"
+            echo "  Copied $LOCALE_COUNT locale files"
         fi
     fi
 fi
@@ -336,7 +336,7 @@ if [ -f "$GRUB_FONT_FILE" ]; then
     echo "Copying GRUB font file to EFI partition..."
     cp -f "$GRUB_FONT_FILE" "$MOUNT_EFI/EFI/BOOT/unicode.pf2" 2>/dev/null || true
     if [ -f "$MOUNT_EFI/EFI/BOOT/unicode.pf2" ]; then
-        echo "  ✓ Copied GRUB font file to EFI partition"
+        echo "  Copied GRUB font file to EFI partition"
     else
         echo "  WARNING: Failed to copy GRUB font file"
     fi
@@ -375,7 +375,7 @@ if [ -f "$OVERLAY_GRUB_CFG" ]; then
     mkdir -p "$MOUNT_ROOT/boot/grub"
     # Replace $ROOT_UUID with actual PARTUUID (used in kernel command line)
     sed "s/\$ROOT_UUID/$ROOT_PARTUUID/g" "$OVERLAY_GRUB_CFG" > "$MOUNT_ROOT/boot/grub/grub.cfg"
-    echo "  ✓ GRUB config copied and ROOT_UUID replaced with $ROOT_PARTUUID"
+    echo "  GRUB config copied and ROOT_UUID replaced with $ROOT_PARTUUID"
 else
     echo "Error: Overlay grub.cfg not found at $OVERLAY_GRUB_CFG"
     echo "  Buildroot must be built first to generate overlay files"
@@ -398,7 +398,7 @@ if [ -f "$EFI_GRUB_CFG_TEMPLATE" ]; then
         exit 1
     fi
     cp "$MOUNT_EFI/EFI/trading/grub.cfg" "$MOUNT_EFI/EFI/BOOT/grub.cfg"
-    echo "  ✓ EFI grub.cfg copied to /EFI/trading/grub.cfg with UUID: $ROOT_FS_UUID (verified minimal: $EFI_GRUB_LINES lines)"
+    echo "  EFI grub.cfg copied to /EFI/trading/grub.cfg with UUID: $ROOT_FS_UUID (verified minimal: $EFI_GRUB_LINES lines)"
 else
     echo "Error: EFI grub.cfg template not found at $EFI_GRUB_CFG_TEMPLATE"
     exit 1
@@ -416,7 +416,7 @@ if [ -f "$MOUNT_EFI/EFI/BOOT/bootx64.efi" ]; then
     echo "Copying GRUB EFI binary to /EFI/trading/grubx64.efi..."
     mkdir -p "$MOUNT_EFI/EFI/trading"
     cp -f "$MOUNT_EFI/EFI/BOOT/bootx64.efi" "$MOUNT_EFI/EFI/trading/grubx64.efi"
-    echo "  ✓ GRUB EFI binary copied to /EFI/trading/grubx64.efi"
+    echo "  GRUB EFI binary copied to /EFI/trading/grubx64.efi"
 else
     echo "Error: GRUB EFI binary not found at $MOUNT_EFI/EFI/BOOT/bootx64.efi"
     exit 1
@@ -436,7 +436,7 @@ if [ -f "$GRUB_FONT_FILE" ]; then
     mkdir -p "$MOUNT_EFI/EFI/trading"
     cp -f "$GRUB_FONT_FILE" "$MOUNT_EFI/EFI/trading/unicode.pf2" 2>/dev/null || true
     if [ -f "$MOUNT_EFI/EFI/trading/unicode.pf2" ]; then
-        echo "  ✓ Copied GRUB font file to /EFI/trading/"
+        echo "  Copied GRUB font file to /EFI/trading/"
     fi
 fi
 
@@ -460,7 +460,7 @@ if [ -d "$MOUNT_ROOT/opt/trading" ]; then
         echo "Warning: Failed to set ownership of /opt/trading"
         echo "  Run manually on target: chown -R trading:trading /opt/trading"
     }
-    echo "  ✓ /opt/trading ownership set to trading:trading (1000:1000)"
+    echo "  /opt/trading ownership set to trading:trading (1000:1000)"
 fi
 
 # Register EFI boot entry (optional, but recommended)
@@ -507,7 +507,7 @@ if [ "$BOOTLOADER_SIZE" -lt 500000 ]; then
     echo "         BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI includes 'ext2'"
 fi
 
-echo "✓ All files verified"
+echo "All files verified"
 echo "  - GRUB bootloader: $BOOTLOADER_SIZE bytes"
 echo "  - EFI GRUB config: $(wc -l < "$MOUNT_EFI/EFI/trading/grub.cfg") lines"
 echo "  - Root GRUB config: $(wc -l < "$MOUNT_ROOT/boot/grub/grub.cfg") lines"

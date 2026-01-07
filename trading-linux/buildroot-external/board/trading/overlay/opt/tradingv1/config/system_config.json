@@ -1,0 +1,139 @@
+{
+  "system": {
+    "name": "FPGA Trading System",
+    "version": "1.0.0",
+    "log_level": "INFO",
+    "enable_prometheus": false,
+    "enable_auto_restart": false,
+    "healthcheck_interval_ms": 500,
+    "startup_timeout_seconds": 30,
+    "shutdown_timeout_seconds": 10
+  },
+  "project_14": {
+    "name": "Order Gateway",
+    "executable": "/opt/tradingv1/bin/order_gateway",
+    "args": ["0.0.0.0", "5000", "--enable-disruptor", "--tcp-port", "9999", "--quiet"],
+    "args_xdp": ["0.0.0.0", "5000", "--enable-disruptor", "--use-xdp", "--xdp-interface", "eno2", "--xdp-queue-id", "1", "--enable-rt", "--disable-kafka"],
+    "enable_xdp": false,
+    "requires_sudo": false,
+    "working_directory": "/opt/tradingv1",
+    "environment": {
+      "LD_LIBRARY_PATH": "/usr/local/lib"
+    },
+    "startup_delay_ms": 1000,
+    "healthcheck": {
+      "type": "tcp",
+      "host": "localhost",
+      "port": 9999,
+      "timeout_ms": 1000
+    },
+    "prometheus_port": 9091
+  },
+
+  "project_15": {
+    "name": "Market Maker FSM",
+    "executable": "/opt/tradingv1/bin/market_maker",
+    "config_file": "/opt/tradingv1/config/p15_config.json",
+    "working_directory": "/opt/tradingv1",
+    "environment": {},
+    "startup_delay_ms": 2000,
+    "healthcheck": {
+      "type": "prometheus",
+      "url": "http://localhost:9092/metrics",
+      "timeout_ms": 1000
+    },
+    "prometheus_port": 9092,
+    "depends_on": ["project_14"]
+  },
+
+  "simulated_exchange": {
+    "name": "Simulated Exchange",
+    "executable": "/opt/tradingv1/bin/simulated_exchange",
+    "working_directory": "/opt/tradingv1",
+    "environment": {},
+    "startup_delay_ms": 2500,
+    "healthcheck": {
+      "type": "tcp",
+      "host": "localhost",
+      "port": 5001,
+      "timeout_ms": 1000
+    }
+  },
+
+  "project_16": {
+    "name": "Order Execution Engine",
+    "executable": "/opt/tradingv1/bin/order_execution_engine",
+    "config_file": "/opt/tradingv1/config/p16_config.json",
+    "working_directory": "/opt/tradingv1",
+    "environment": {},
+    "startup_delay_ms": 3000,
+    "healthcheck": {
+      "type": "prometheus",
+      "url": "http://localhost:9093/metrics",
+      "timeout_ms": 1000
+    },
+    "prometheus_port": 9093,
+    "depends_on": ["project_15", "simulated_exchange"]
+  },
+
+  "shared_memory": {
+    "order_ring": {
+      "path": "/dev/shm/order_ring_mm",
+      "size_bytes": 262144,
+      "cleanup_on_start": true,
+      "cleanup_on_stop": true
+    },
+    "fill_ring": {
+      "path": "/dev/shm/fill_ring_oe",
+      "size_bytes": 262144,
+      "cleanup_on_start": true,
+      "cleanup_on_stop": true
+    }
+  },
+
+  "monitoring": {
+    "orchestrator_prometheus_port": 9094,
+    "enable_grafana_dashboard": false,
+    "grafana_dashboard_path": "/opt/tradingv1/assets/dashboards/trading_system.json",
+    "enable_alerts": false,
+    "alert_webhook_url": ""
+  },
+
+  "performance": {
+    "enable_cpu_pinning": true,
+    "cpu_affinity": {
+      "project_14": [14, 15],
+      "project_15": [16, 17],
+      "project_16": [18, 19],
+      "orchestrator": [20, 21]
+    },
+    "enable_realtime_scheduling": true,
+    "disable_rt_for_development": false,
+    "realtime_priority": {
+      "project_14": 80,
+      "project_15": 70,
+      "project_16": 60,
+      "orchestrator": 50
+    }
+  },
+
+  "testing": {
+    "enable_bbo_simulator": false,
+    "bbo_simulator_port": 5000,
+    "bbo_simulator_rate_hz": 100,
+    "integration_test_timeout_seconds": 60
+  },
+
+  "_comments": {
+    "system": "Global system configuration",
+    "project_17": "Hardware Timestamping (kernel-level latency measurement on UDP port 5000, shares port with P14 via SO_REUSEPORT)",
+    "project_14": "Order Gateway (XDP listener, BBO parser, TCP/MQTT/Kafka publisher). Use 'args' for regular mode or 'args_xdp' for XDP mode (requires sudo)",
+    "project_15": "Market Maker FSM (strategy logic, order generation)",
+    "simulated_exchange": "Simulated Exchange Server (FIX protocol server on port 5001)",
+    "project_16": "Order Execution Engine (FIX protocol client, connects to simulated exchange)",
+    "shared_memory": "Disruptor ring buffers for IPC",
+    "monitoring": "Prometheus metrics and Grafana dashboards",
+    "performance": "CPU pinning and RT scheduling (requires root). Projects 15 and 16 need RT scheduling for shared memory access.",
+    "testing": "Integration test configuration"
+  }
+}

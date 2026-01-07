@@ -1,0 +1,33 @@
+{
+    "log_level": "info",
+    "pcie": {
+        "device": "/dev/xdma0_c2h_0",
+        "gen2_mode": true
+    },
+    "disruptor": {
+        "enable": true,
+        "shm_name": "gateway"
+    },
+    "performance": {
+        "enable_rt": true,
+        "rt_pcie_cpu": 14,
+        "rt_pcie_priority": 90,
+        "quiet_mode": true,
+        "use_pcie_v2": true,
+        "pcie_poll_mode": "busy_spin"
+    },
+    "_rt_allocation_notes": "CPU 14 dedicated to PCIe DMA (highest priority)",
+    "_pcie_v2_notes": {
+        "poll_modes": {
+            "sleep": "~10ms latency, ~1% CPU (legacy behavior)",
+            "poll": "~100us latency, ~5% CPU (event-driven)",
+            "hybrid": "~50us latency, ~20% CPU (adaptive spin+poll)",
+            "busy_spin": "<10us latency, 100% CPU (lowest latency)"
+        },
+        "optimizations": [
+            "64KB read buffer (vs 4KB)",
+            "Lock-free ring buffer (no memmove)",
+            "Detailed latency stats (read/process/callback)"
+        ]
+    }
+}

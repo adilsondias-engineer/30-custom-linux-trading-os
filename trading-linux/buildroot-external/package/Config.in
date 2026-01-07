@@ -1,0 +1,7 @@
+source "$BR2_EXTERNAL_TRADING_PATH/package/nvidia-driver-trading/Config.in"
+source "$BR2_EXTERNAL_TRADING_PATH/package/cuda-trading/Config.in"
+source "$BR2_EXTERNAL_TRADING_PATH/package/xgboost/Config.in"
+source "$BR2_EXTERNAL_TRADING_PATH/package/xdma/Config.in"
+source "$BR2_EXTERNAL_TRADING_PATH/package/google-benchmark/Config.in"
+source "$BR2_EXTERNAL_TRADING_PATH/package/librdkafka/Config.in"
+

@@ -1,0 +1,97 @@
+{
+  "system": {
+    "name": "FPGA Trading System (PCIe + XGBoost)",
+    "version": "2.0.0",
+    "log_level": "INFO",
+    "enable_prometheus": true,
+    "enable_auto_restart": false,
+    "healthcheck_interval_ms": 500,
+    "startup_timeout_seconds": 30,
+    "shutdown_timeout_seconds": 10
+  },
+
+  "project_24": {
+    "name": "Order Gateway (PCIe + XGBoost)",
+    "executable": "order_gateway",
+    "config_file": "config/p24_config.json",
+    "working_directory": ".",
+    "startup_delay_ms": 0,
+    "healthcheck": {
+      "type": "process",
+      "timeout_ms": 1000
+    }
+  },
+
+  "project_25": {
+    "name": "Market Maker (Disruptor Consumer)",
+    "executable": "market_maker",
+    "config_file": "config/p25_config.json",
+    "working_directory": ".",
+    "startup_delay_ms": 2000,
+    "healthcheck": {
+      "type": "process",
+      "timeout_ms": 1000
+    },
+    "depends_on": ["project_24"]
+  },
+
+  "project_26": {
+    "name": "Order Execution (Simulated Fills)",
+    "executable": "order_execution_engine",
+    "config_file": "config/p26_config.json",
+    "working_directory": ".",
+    "startup_delay_ms": 3000,
+    "healthcheck": {
+      "type": "process",
+      "timeout_ms": 1000
+    },
+    "depends_on": ["project_25"]
+  },
+
+  "shared_memory": {
+    "bbo_ring": {
+      "path": "/dev/shm/bbo_ring_gateway",
+      "size_bytes": 262144,
+      "cleanup_on_start": true,
+      "cleanup_on_stop": true
+    },
+    "order_ring": {
+      "path": "/dev/shm/order_ring_mm",
+      "size_bytes": 262144,
+      "cleanup_on_start": true,
+      "cleanup_on_stop": true
+    },
+    "fill_ring": {
+      "path": "/dev/shm/fill_ring_oe",
+      "size_bytes": 262144,
+      "cleanup_on_start": true,
+      "cleanup_on_stop": true
+    }
+  },
+
+  "monitoring": {
+    "orchestrator_prometheus_port": 9094,
+    "enable_grafana_dashboard": false,
+    "enable_alerts": false
+  },
+
+  "performance": {
+    "enable_cpu_pinning": true,
+    "cpu_affinity": {
+      "project_24": [14],
+      "project_25": [15],
+      "project_26": [16],
+      "orchestrator": [17]
+    },
+    "enable_realtime_scheduling": true
+  },
+
+  "_comments": {
+    "system": "Global system configuration for PCIe + XGBoost architecture",
+    "project_24": "Order Gateway: PCIe from FPGA (P23) + XGBoost GPU inference (84% accuracy)",
+    "project_25": "Market Maker: Consumes BBO+predictions from P24 via Disruptor, sends orders to P26",
+    "project_26": "Order Execution: Simulated fills with configurable latency, returns fills to P25",
+    "shared_memory": "Disruptor ring buffers for IPC (bbo_ring: P24->P25, order_ring: P25->P26, fill_ring: P26->P25)",
+    "data_flow": "FPGA --[PCIe]--> P24 --[Disruptor]--> P25 --[Disruptor]--> P26 --[Disruptor]--> P25"
+  }
+}

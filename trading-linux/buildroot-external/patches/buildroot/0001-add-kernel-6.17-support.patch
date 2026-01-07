@@ -1,0 +1,58 @@
+--- a/package/linux-headers/Config.in.host
++++ b/package/linux-headers/Config.in.host
+@@ -44,6 +44,10 @@ config BR2_KERNEL_HEADERS_6_6
+ 	bool "Linux 6.6.x kernel headers"
+ 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_6
+ 
++config BR2_KERNEL_HEADERS_6_17
++	bool "Linux 6.17.x kernel headers"
++	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_17
++	select BR2_KERNEL_HEADERS_LATEST
++
+ config BR2_KERNEL_HEADERS_6_12
+ 	bool "Linux 6.12.x kernel headers"
+ 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12
+-	select BR2_KERNEL_HEADERS_LATEST
++	# BR2_KERNEL_HEADERS_LATEST moved to 6.17
+ 
+ config BR2_KERNEL_HEADERS_VERSION
+ 	bool "Manually specified Linux version"
+@@ -128,6 +132,10 @@ config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_12
+ 	bool "6.12.x or later"
+ 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12
+ 
++config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_17
++	bool "6.17.x or later"
++	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_17
++
+ config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_11
+ 	bool "6.11.x"
+ 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_11
+@@ -429,6 +437,7 @@ config BR2_DEFAULT_KERNEL_HEADERS
+ 	default "5.4.291"	if BR2_KERNEL_HEADERS_5_4
+ 	default "5.10.235"	if BR2_KERNEL_HEADERS_5_10
+ 	default "5.15.179"	if BR2_KERNEL_HEADERS_5_15
+ 	default "6.1.131"	if BR2_KERNEL_HEADERS_6_1
+ 	default "6.6.83"	if BR2_KERNEL_HEADERS_6_6
++	default "6.17.8"	if BR2_KERNEL_HEADERS_6_17
+ 	default "6.12.19"	if BR2_KERNEL_HEADERS_6_12
+ 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
+ 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
+--- a/toolchain/Config.in
++++ b/toolchain/Config.in
+@@ -642,9 +642,14 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12
+ 	bool
+ 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_11
+-	select BR2_TOOLCHAIN_HEADERS_LATEST
++	# BR2_TOOLCHAIN_HEADERS_LATEST moved to 6_17
+ 
++config BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_17
++	bool
++	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12
++	select BR2_TOOLCHAIN_HEADERS_LATEST
++
+ config BR2_TOOLCHAIN_HEADERS_AT_LEAST
+ 	string
++	default "6.17" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_17
+ 	default "6.12" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12
+ 	default "6.11" if BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_11

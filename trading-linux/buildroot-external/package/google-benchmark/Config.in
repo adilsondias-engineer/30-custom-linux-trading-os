@@ -1,0 +1,23 @@
+config BR2_PACKAGE_GOOGLE_BENCHMARK
+	bool "google-benchmark"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_USE_WCHAR
+	help
+	  Google Benchmark is a library to support the benchmarking
+	  of functions, similar to unit tests but for performance.
+
+	  https://github.com/google/benchmark
+
+if BR2_PACKAGE_GOOGLE_BENCHMARK
+
+config BR2_PACKAGE_GOOGLE_BENCHMARK_VERSION
+	string "Google Benchmark version"
+	default "1.8.3"
+	help
+	  Google Benchmark version to build.
+	  
+	  Latest stable version is 1.8.3 (as of 2024).
+	  Can use "main" for latest development version.
+
+endif
+

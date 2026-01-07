@@ -1,0 +1,342 @@
+# Target architecture
+BR2_x86_64=y
+BR2_x86_alderlake=y  # Closest to i9-14900KF (Raptor Lake Refresh)
+
+# Toolchain
+BR2_TOOLCHAIN_BUILDROOT_GLIBC=y
+BR2_GCC_VERSION_15_X=y
+BR2_BINUTILS_VERSION_2_44_X=y
+BR2_TOOLCHAIN_BUILDROOT_CXX=y
+BR2_TARGET_GENERIC_HOSTNAME="tradingserver"
+BR2_TARGET_GENERIC_ISSUE="Welcome to Trading OS"
+BR2_TARGET_GENERIC_ROOT_PASSWD="trading123"
+
+# Kernel (matching PC kernel version 6.17.0-8-generic)
+# Using 6.17.8 to match working PC kernel for NVIDIA driver compatibility
+# NOTE: Requires Buildroot patch for 6.17.x support (see patches/buildroot/)
+BR2_LINUX_KERNEL=y
+BR2_LINUX_KERNEL_CUSTOM_VERSION=y
+BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.17.8"  # Match PC kernel 6.17.0-8-generic
+# Kernel headers - use same as kernel being built (automatic)
+BR2_KERNEL_HEADERS_AS_KERNEL=y
+BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_17=y
+BR2_LINUX_KERNEL_DEFCONFIG="x86_64"
+BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="$(BR2_EXTERNAL_TRADING_PATH)/board/trading/linux.config"
+# Ensure kernel is built as vanilla (no LOCALVERSION suffix) for NVIDIA driver compatibility
+BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE=""
+BR2_ROOTFS_OVERLAY="/work/tos/trading-linux/buildroot-external/board/trading/overlay"
+BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux efi_uga ext2 fat squash4 part_msdos part_gpt all_video gfxterm gfxterm_background normal efi_gop iso9660 png search search_fs_uuid search_fs_file search_label configfile font"
+# BR2_TARGET_GRUB2_BUILTIN_CONFIG_EFI is not set - using separate EFI grub.cfg file instead
+BR2_TARGET_GRUB2_CFG="$(BR2_ROOTFS_OVERLAY)/boot/grub/grub.cfg"
+BR2_TOOLCHAIN_BUILDROOT_WCHAR=y
+BR2_TARGET_GRUB2_INSTALL_TOOLS=y
+BR2_USE_WCHAR=y
+
+# Locale support (required for tmux and other UTF-8 applications)
+BR2_TARGET_ENABLE_LOCALE=y
+BR2_TARGET_LOCALTIME="Australia/Melbourne"
+BR2_GENERATE_LOCALE="en_US.UTF-8"
+BR2_TARGET_EDK2_ARCH_SUPPORTS=y
+BR2_TARGET_GRUB2_ARCH_SUPPORTS=y
+BR2_TARGET_GRUB2=y
+BR2_TARGET_GRUB2_HAS_EFI_BOOT=y
+BR2_TARGET_GRUB2_HAS_PTF=y
+# BR2_TARGET_GRUB2_I386_PC is not set
+# BR2_TARGET_GRUB2_I386_EFI is not set
+BR2_TARGET_GRUB2_X86_64_EFI=y
+
+# Root filesystem
+BR2_TARGET_ROOTFS_EXT2=y
+BR2_TARGET_ROOTFS_EXT2_LABEL="tradingfs"
+BR2_TARGET_ROOTFS_EXT2_SIZE="8G"
+BR2_TARGET_ROOTFS_EXT2_4=y
+BR2_TARGET_ROOTFS_EXT2_GEN=4
+BR2_TARGET_ROOTFS_SQUASHFS=y
+BR2_TARGET_ROOTFS_ISO9660=n
+BR2_TARGET_ROOTFS_ISO9660_GRUB2=n
+BR2_TARGET_ROOTFS_ISO9660_HYBRID=n
+# BR2_TARGET_ROOTFS_INITRAMFS is not set
+BR2_TARGET_ROOTFS_CPIO=y
+BR2_TARGET_ROOTFS_CPIO_GZIP=y
+BR2_TARGET_ROOTFS_ISO9660_EFI_BOOTLOADER=n
+BR2_TARGET_ROOTFS_ISO9660_BOOT_MENU="$(BR2_ROOTFS_OVERLAY)/boot/grub/grub.cfg"
+BR2_TARGET_ROOTFS_ISO9660_INITRD=n
+BR2_ROOTFS_USERS_TABLES="$(BR2_EXTERNAL_TRADING_PATH)/board/trading/users.txt"
+
+BR2_ROOTFS_POST_BUILD_SCRIPT="$(BR2_EXTERNAL_TRADING_PATH)/board/trading/post-build.sh"
+# Core
+BR2_PACKAGE_BUSYBOX=y
+BR2_PACKAGE_BUSYBOX_CONFIG="$(BR2_EXTERNAL_TRADING_PATH)/board/trading/busybox.config"
+
+# Init system
+BR2_INIT_SYSTEMD=y
+BR2_PACKAGE_SYSTEMD_LOGIND=y
+BR2_PACKAGE_SYSTEMD_NETWORKD=y
+
+# Shell
+BR2_PACKAGE_BASH=y
+
+# SSH
+BR2_PACKAGE_OPENSSH=y
+BR2_PACKAGE_OPENSSH_SERVER=y
+
+# Networking
+BR2_PACKAGE_IPROUTE2=y
+BR2_PACKAGE_DHCP=n  # Use systemd-networkd
+BR2_PACKAGE_LIBCURL=y
+BR2_PACKAGE_LIBCURL_CURL=y
+BR2_PACKAGE_LIBIDN2=y  # Required by curl/openssl for IDN support
+BR2_PACKAGE_WGET=y
+
+# Editors
+BR2_PACKAGE_VIM=y  # Or nano if smaller
+
+# Utilities
+BR2_PACKAGE_HTOP=y
+BR2_PACKAGE_PROCPS_NG=y
+BR2_PACKAGE_UTIL_LINUX=y
+BR2_PACKAGE_UTIL_LINUX_SCHEDUTILS=y  # taskset, chrt, ionice (required for CPU affinity and RT scheduling)
+BR2_PACKAGE_FILE=y
+BR2_PACKAGE_GLIBC_UTILS=y
+BR2_PACKAGE_SUDO=y
+BR2_PACKAGE_TMUX=y
+BR2_PACKAGE_SCREEN=y
+BR2_PACKAGE_MINICOM=y              # Serial terminal for USB-to-serial adapters (FPGA monitoring)
+
+# Capabilities (required for setcap/getcap - needed for CPU isolation and RT scheduling)
+BR2_PACKAGE_LIBCAP=y
+BR2_PACKAGE_LIBCAP_TOOLS=y  # Installs setcap, getcap, getpcaps, capsh
+
+# CPU power management (required for setting CPU governor to performance)
+BR2_PACKAGE_LINUX_TOOLS_CPUPOWER=y
+
+# Performance profiling tools (perf for CPU profiling, used in performance analysis)
+BR2_PACKAGE_LINUX_TOOLS_PERF=y
+
+# NUMA-aware memory allocation (useful for multi-socket systems)
+BR2_PACKAGE_NUMACTL=y
+
+# Time sync
+BR2_PACKAGE_CHRONY=y
+
+# Compiler toolchain
+BR2_PACKAGE_HOST_GCC=y
+BR2_PACKAGE_MAKE=y
+BR2_PACKAGE_CMAKE=y
+BR2_PACKAGE_PKGCONF=y
+BR2_PACKAGE_GIT=y
+
+# C++ runtime
+BR2_PACKAGE_LIBSTDCPP=y
+# OpenMP support (required by XGBoost and CUDA) - enables libgomp
+# NOTE: BR2_PACKAGE_LIBGOMP doesn't exist - use BR2_GCC_ENABLE_OPENMP instead
+# IMPORTANT: If this is enabled after toolchain was built, run: make toolchain-rebuild
+BR2_GCC_ENABLE_OPENMP=y
+
+# Debug tools (comprehensive set for runtime troubleshooting)
+BR2_PACKAGE_GDB=y                    # GNU Debugger - essential for debugging
+BR2_PACKAGE_GDB_DEBUGGER=y           # Full GDB with debugger support
+BR2_PACKAGE_STRACE=y                 # System call tracer
+BR2_PACKAGE_LTRACE=y                 # Library call tracer (useful for debugging library issues)
+BR2_PACKAGE_VALGRIND=y               # Memory debugging and profiling
+BR2_PACKAGE_TCPDUMP=y                # Network packet analyzer
+BR2_PACKAGE_WIRESHARK=y              # Network protocol analyzer (includes tshark)
+BR2_PACKAGE_IPERF3=y                 # Network performance testing
+BR2_PACKAGE_ETHTOOL=y                # Ethernet interface configuration and debugging
+BR2_PACKAGE_IPUTILS=y                # ping, traceroute, etc.
+BR2_PACKAGE_IPUTILS_PING=y           # ping utility
+# BR2_PACKAGE_IPUTILS_TRACEROUTE6 is deprecated - removed
+BR2_PACKAGE_NETCAT=y                 # Network utility for reading/writing network connections
+BR2_PACKAGE_NETCAT_OPENBSD=y         # OpenBSD netcat (better than GNU version)
+BR2_PACKAGE_SOCAT=y                  # Advanced netcat replacement
+BR2_PACKAGE_NMAP=y                   # Network mapper and security scanner
+BR2_PACKAGE_SSHFS_FUSE=y             # SSH filesystem (useful for remote debugging)
+BR2_PACKAGE_LSOF=y                   # List open files (useful for debugging file descriptor leaks)
+BR2_PACKAGE_PCIUTILS=y               # PCI utilities (lspci, setpci) - useful for hardware debugging
+BR2_PACKAGE_USBUTILS=y               # USB utilities (lsusb) - useful for hardware debugging
+BR2_PACKAGE_KEXEC=y                  # kexec/kdump for crash dumps
+BR2_PACKAGE_PYTHON3=y                # Python 3 for debugging scripts
+BR2_PACKAGE_PYTHON3_PIP=y            # Python package installer
+BR2_PACKAGE_PYTHON3_SETUPTOOLS=y     # Python setuptools
+BR2_PACKAGE_PYTHON3_PSUTIL=y         # Python system and process utilities
+BR2_PACKAGE_BINUTILS=y               # Binary utilities (objdump, readelf, nm, etc.)
+BR2_PACKAGE_ELFUTILS=y               # ELF utilities (eu-readelf, eu-objdump, etc.)
+BR2_PACKAGE_E2FSPROGS=y              # ext2/3/4 filesystem utilities
+BR2_PACKAGE_E2FSPROGS_DEBUGFS=y      # ext2/3/4 debugger
+BR2_PACKAGE_FUSE=y                   # FUSE filesystem (for sshfs)
+BR2_PACKAGE_MTD=y                    # Memory Technology Device utilities
+BR2_PACKAGE_MTD_UTILS=y              # MTD utilities (flashcp, etc.)
+BR2_PACKAGE_I2C_TOOLS=y              # I2C bus tools (if needed for hardware debugging)
+BR2_PACKAGE_SPI_TOOLS=y              # SPI bus tools (if needed for hardware debugging)
+BR2_PACKAGE_KMOD=y                   # Kernel module utilities (depmod, modprobe, etc.)
+BR2_PACKAGE_ACPI=y                   # ACPI utilities (acpi, acpitool)
+BR2_PACKAGE_ACPI_TOOLS=y             # ACPI tools
+BR2_PACKAGE_SMARTMONTOOLS=y          # SMART disk monitoring tools
+BR2_PACKAGE_HDDPARM=y                # Hard disk drive utilities
+BR2_PACKAGE_NVME_CLI=y               # NVMe command-line interface
+BR2_PACKAGE_STRESS_NG=y              # Stress testing tool (useful for debugging under load)
+BR2_PACKAGE_FIO=y                    # Flexible I/O tester
+BR2_PACKAGE_SYSSTAT=y                # System performance tools (sar, iostat, mpstat, etc.)
+BR2_PACKAGE_DSTAT=y                  # Versatile resource statistics tool
+BR2_PACKAGE_ATOP=y                   # Advanced system and process monitor
+BR2_PACKAGE_BMON=y                   # Bandwidth monitor
+BR2_PACKAGE_IFTOP=y                  # Network interface traffic monitor
+BR2_PACKAGE_NETHOGS=y                # Per-process network bandwidth monitor
+BR2_PACKAGE_NLOAD=y                  # Network traffic monitor
+BR2_PACKAGE_IPTABLES=y               # IP packet filter administration (useful for network debugging)
+BR2_PACKAGE_RSYNC=y                  # File synchronization tool (useful for transferring debug files)
+BR2_PACKAGE_JQ=y                     # JSON processor (useful for parsing JSON logs)
+BR2_PACKAGE_TREE=y                   # Directory tree display
+BR2_PACKAGE_MC=y                     # Midnight Commander (file manager with built-in editor)
+BR2_PACKAGE_NANO=y                   # Simple text editor (backup to vim)
+BR2_PACKAGE_LESS=y                   # Pager utility (better than more)
+BR2_PACKAGE_MULTITail=y              # Monitor multiple log files
+BR2_PACKAGE_LOGROTATE=y              # Log rotation utility
+BR2_PACKAGE_CRON=y                   # Cron daemon (for scheduled tasks)
+BR2_PACKAGE_TIME=y                   # Command execution time measurement
+BR2_PACKAGE_WATCH=y                  # Execute command periodically
+BR2_PACKAGE_WHICH=y                  # Locate command
+BR2_PACKAGE_MAN=y                    # Manual pages
+BR2_PACKAGE_MAN_PAGES=y              # Manual pages content
+BR2_PACKAGE_CCACHE=y                 # Compiler cache (speeds up rebuilds)
+BR2_PACKAGE_PKG_CONFIG=y             # Package configuration tool
+BR2_PACKAGE_AUTOCONF=y               # Autoconf (for building packages)
+BR2_PACKAGE_AUTOMAKE=y               # Automake (for building packages)
+BR2_PACKAGE_LIBTOOL=y                # Libtool (for building packages)
+BR2_PACKAGE_M4=y                     # Macro processor
+BR2_PACKAGE_BISON=y                  # Parser generator
+BR2_PACKAGE_FLEX=y                   # Lexical analyzer generator
+BR2_PACKAGE_GETTEXT=y                # Internationalization framework
+BR2_PACKAGE_GETTEXT_TOOLS=y          # Gettext tools
+BR2_PACKAGE_GLIB2=y                  # GLib library (used by many tools)
+BR2_PACKAGE_GLIB2_UTILS=y            # GLib utilities
+BR2_PACKAGE_PCRE=y                   # Perl Compatible Regular Expressions
+BR2_PACKAGE_PCRE2=y                  # PCRE2 library
+BR2_PACKAGE_OPENSSL=y                # OpenSSL library (for crypto, TLS)
+BR2_PACKAGE_OPENSSL_BIN=y            # OpenSSL binaries
+BR2_PACKAGE_CA_CERTIFICATES=y        # CA certificates bundle
+BR2_PACKAGE_LIBXML2=y                # XML parsing library
+BR2_PACKAGE_LIBXSLT=y                # XSLT library
+BR2_PACKAGE_EXPAT=y                  # XML parser library
+BR2_PACKAGE_LIBYAML=y                # YAML parser library
+BR2_PACKAGE_READLINE=y               # Command line editing library
+BR2_PACKAGE_NCURSES=y                # Terminal control library
+BR2_PACKAGE_SQLITE=y                 # SQLite database
+BR2_PACKAGE_SQLITE_TOOLS=y           # SQLite command-line tools
+
+# Boost (needed for P25, P26)
+BR2_PACKAGE_BOOST=y
+BR2_PACKAGE_BOOST_SYSTEM=y
+BR2_PACKAGE_BOOST_THREAD=y
+BR2_PACKAGE_BOOST_ATOMIC=y
+
+# JSON (nlohmann/json - header-only library)
+BR2_PACKAGE_JSON_FOR_MODERN_CPP=y
+
+# Logging (spdlog)
+BR2_PACKAGE_SPDLOG=y
+
+# Benchmarking (google-benchmark)
+BR2_PACKAGE_GOOGLE_BENCHMARK=y
+BR2_PACKAGE_GOOGLE_BENCHMARK_VERSION="1.8.3"
+
+# Project 14: Order Gateway C++ dependencies
+# MQTT client (eclipse-paho-mqtt-c)
+BR2_PACKAGE_PAHO_MQTT_C=y
+
+# librdkafka (required for compilation, even if not used)
+BR2_PACKAGE_LIBRDKAFKA=y
+BR2_PACKAGE_LIBRDKAFKA_SSL=y
+# BR2_PACKAGE_LIBRDKAFKA_SASL is not set
+# BR2_PACKAGE_LIBRDKAFKA_ZSTD is not set
+
+# BPF library (for XDP kernel bypass support - optional, only if XDP is used)
+# Note: DPDK mode doesn't require libbpf, but keeping it for potential XDP support
+BR2_PACKAGE_LIBBPF=y
+
+# DPDK (Data Plane Development Kit) for kernel bypass
+# Using local DPDK source at /work/tos/dpdk-25.11 (custom package override)
+# Note: DPDK requires glibc, kernel headers >= 4.19, and SSE4.2 for x86_64
+BR2_PACKAGE_DPDK=y
+BR2_PACKAGE_DPDK_EXAMPLES=n  # Don't install examples to save space
+BR2_PACKAGE_DPDK_TESTS=n      # Don't install tests to save space
+
+# Note: Kafka (librdkafka) is not used - only DPDK mode is enabled
+
+# SDL2 for trading UI (29-trading-ui)
+BR2_PACKAGE_SDL2=y
+BR2_PACKAGE_SDL2_IMAGE=y           # Image loading (PNG, JPEG, etc.)
+BR2_PACKAGE_SDL2_TTF=y             # TrueType font rendering
+BR2_PACKAGE_SDL2_KMSDRM=y          # KMS/DRM video driver (no X11 needed)
+BR2_PACKAGE_SDL2_OPENGLES=y       # OpenGL ES for GPU acceleration
+BR2_PACKAGE_LIBPNG=y
+BR2_PACKAGE_FREETYPE=y
+BR2_PACKAGE_LIBDRM=y
+BR2_PACKAGE_DEJAVU_FONTS=y
+
+# Mesa3D for GBM/EGL/GLES support (required for SDL2 KMSDRM)
+BR2_PACKAGE_MESA3D=y
+BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SOFTPIPE=y  # Software rasterizer (fallback, replaces swrast)
+BR2_PACKAGE_MESA3D_OPENGL_EGL=y            # EGL support (provides LIBEGL and GBM)
+BR2_PACKAGE_MESA3D_OPENGL_ES=y             # OpenGL ES support (provides LIBGLES)
+
+# Desktop/GUI
+BR2_PACKAGE_XORG7=n
+BR2_PACKAGE_WAYLAND=n
+# BR2_PACKAGE_QT5 is not set
+BR2_PACKAGE_GTK=n
+# BR2_PACKAGE_LIBOPENSSL is not set (use BR2_PACKAGE_OPENSSL instead)
+
+# Browsers
+BR2_PACKAGE_FIREFOX=n
+BR2_PACKAGE_CHROMIUM=n
+
+# Office/Productivity
+BR2_PACKAGE_LIBREOFFICE=n
+
+# Multimedia
+BR2_PACKAGE_FFMPEG=n
+BR2_PACKAGE_GSTREAMER=n
+BR2_PACKAGE_ALSA_LIB=n
+BR2_PACKAGE_PULSEAUDIO=n
+
+# Print/Scan
+BR2_PACKAGE_CUPS=n
+
+# Databases (unless needed)
+BR2_PACKAGE_POSTGRESQL=n
+BR2_PACKAGE_MYSQL=n
+# BR2_PACKAGE_SQLITE is already enabled above (line 223)
+
+# Containerization
+BR2_PACKAGE_DOCKER=n
+BR2_PACKAGE_LXC=n
+
+# Cloud tools
+BR2_PACKAGE_AWSCLI=n
+#
+# External options
+#
+
+#
+# FPGA Trading System Buildroot External Tree (in /work/tos/trading-linux/buildroot-external)
+#
+
+#
+# Trading System Configuration
+#
+# NVIDIA GPU support (proprietary driver + CUDA + XGBoost)
+BR2_PACKAGE_NVIDIA_DRIVER_TRADING=y
+BR2_PACKAGE_NVIDIA_DRIVER_TRADING_VERSION="590.48.01"
+BR2_PACKAGE_CUDA_TRADING=y
+BR2_PACKAGE_CUDA_TRADING_VERSION="13.1.0"
+BR2_PACKAGE_CUDA_TRADING_BUILD_NUMBER="590.44.01"
+BR2_PACKAGE_CUDA_TRADING_MINIMAL=y
+BR2_PACKAGE_XGBOOST=y
+BR2_PACKAGE_XGBOOST_VERSION="3.2.0"
+BR2_PACKAGE_XGBOOST_USE_CUDA=y
+BR2_PACKAGE_XGBOOST_CUDA_ARCH="90"
+
+# FPGA XDMA driver
+BR2_PACKAGE_XDMA=y
+BR2_PACKAGE_XDMA_VERSION="2023.1"

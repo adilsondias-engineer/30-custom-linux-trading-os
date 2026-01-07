@@ -1,0 +1,53 @@
+config BR2_PACKAGE_CUDA_TRADING
+	bool "NVIDIA CUDA Toolkit (Trading OS custom)"
+	depends on BR2_x86_64
+	depends on BR2_PACKAGE_NVIDIA_DRIVER_TRADING
+	help
+	  NVIDIA CUDA Toolkit for GPU computing, customized for Trading OS.
+
+	  IMPORTANT: XGBoost 3.2 only works with CUDA 13.0, NOT 13.1.
+	  CUDA 13.1 has CCCL 3.1.2 which breaks XGBoost 3.x compatibility.
+	  
+	  REQUIRES LOCAL FILES:
+	  - /work/tos/cuda-13.0 (extracted directory) OR
+	  - /work/tos/cuda_13.0.0_580.65.06_linux.run (installer)
+
+	  https://developer.nvidia.com/cuda-toolkit
+
+if BR2_PACKAGE_CUDA_TRADING
+
+config BR2_PACKAGE_CUDA_TRADING_VERSION
+	string "CUDA version"
+	default "13.0.0"
+	help
+	  CUDA version to install.
+	  
+	  CRITICAL: Must be 13.0.0 for XGBoost 3.2 compatibility.
+	  Do NOT use 13.1.0 as it has breaking changes.
+	  
+	  Must match the local directory or installer at:
+	  /work/tos/cuda-$(VERSION) or /work/tos/cuda_$(VERSION)_$(BUILD_NUMBER)_linux.run
+
+config BR2_PACKAGE_CUDA_TRADING_BUILD_NUMBER
+	string "CUDA build number"
+	default "580.65.06"
+	help
+	  CUDA build number (e.g., 580.65.06 for CUDA 13.0.0).
+	  
+	  Must match the local installer filename:
+	  /work/tos/cuda_$(VERSION)_$(BUILD_NUMBER)_linux.run
+
+config BR2_PACKAGE_CUDA_TRADING_MINIMAL
+	bool "Install minimal CUDA (runtime libraries only)"
+	default y
+	help
+	  Install only runtime libraries needed for XGBoost:
+	  - libcudart.so (CUDA runtime)
+	  - libcublas.so (used by XGBoost)
+	  - libcublasLt.so (used by XGBoost)
+	  - libcurand.so (used by XGBoost)
+	  
+	  This reduces size from ~5GB to ~500MB.
+
+endif
+

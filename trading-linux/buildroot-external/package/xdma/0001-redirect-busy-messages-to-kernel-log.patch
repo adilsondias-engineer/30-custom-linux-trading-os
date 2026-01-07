@@ -1,0 +1,43 @@
+From 77ceefe77ceefe77ceefe77ceefe77ceefe77ceefe Mon Sep 17 00:00:00 2001
+From: Trading System <trading@system>
+Date: Thu, 02 Jan 2025 00:00:00 +0000
+Subject: [PATCH] Redirect XDMA BUSY messages from console to kernel log
+
+The XDMA driver prints BUSY status messages to the console using pr_info(),
+which interferes with terminal input. Change these to pr_debug() so they
+only appear in kernel logs (dmesg) and not on the console.
+
+Changes:
+- Change pr_info() to pr_debug() for engine status dump (line 497)
+- Change printk_ratelimited(KERN_INFO) to printk_ratelimited(KERN_DEBUG) for BUSY error messages (line 899)
+
+This prevents console interference while still allowing debugging via dmesg.
+
+---
+ XDMA/linux-kernel/xdma/libxdma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/XDMA/linux-kernel/xdma/libxdma.c b/XDMA/linux-kernel/xdma/libxdma.c
+index 0000000..1111111 100644
+--- a/XDMA/linux-kernel/xdma/libxdma.c
++++ b/XDMA/linux-kernel/xdma/libxdma.c
+@@ -494,7 +494,7 @@ static void engine_status_dump(struct xdma_engine *engine)
+ 	}
+ 
+ 	buf[len - 1] = '\0';
+-	pr_info("%s\n", buffer);
++	pr_debug("%s\n", buffer);
+ }
+ 
+ /**
+@@ -896,7 +896,7 @@ static int engine_err_handle(struct xdma_engine *engine,
+ 	if (engine->status & XDMA_STAT_BUSY) {
+ 		value = read_register(&engine->regs->status);
+ 		if ((value & XDMA_STAT_BUSY))
+-			printk_ratelimited(KERN_INFO
++			printk_ratelimited(KERN_DEBUG
+ 					"%s has errors but is still BUSY\n",
+ 					engine->name);
+ 	}
+-- 
+2.30.2

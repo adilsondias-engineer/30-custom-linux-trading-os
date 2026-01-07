@@ -1,0 +1,37 @@
+config BR2_PACKAGE_NVIDIA_DRIVER_TRADING
+	bool "NVIDIA driver (Trading OS custom - open-source + proprietary)"
+	depends on BR2_LINUX_KERNEL
+	depends on BR2_x86_64
+	help
+	  NVIDIA graphics driver for GPU acceleration, customized for Trading OS.
+	  
+	  IMPORTANT: For RTX 5090 (Blackwell), requires BOTH:
+	  1. Open-source kernel modules (from GitHub) - REQUIRED for RTX 5090
+	  2. Proprietary user-space libraries (from NVIDIA installer) - Still needed
+	  
+	  This package builds open-source kernel modules and installs
+	  user-space libraries from the proprietary installer.
+	  
+	  REQUIRES LOCAL FILES:
+	  - /work/tos/nvidia_driver-linux-x86_64-590.48.01-archive (or .tar.xz)
+	  - /work/tos/open-gpu-kernel-modules (git repository)
+
+	  https://www.nvidia.com/Download/index.aspx
+	  https://github.com/NVIDIA/open-gpu-kernel-modules
+
+if BR2_PACKAGE_NVIDIA_DRIVER_TRADING
+
+config BR2_PACKAGE_NVIDIA_DRIVER_TRADING_VERSION
+	string "NVIDIA driver version"
+	default "590.48.01"
+	help
+	  NVIDIA driver version to build.
+	  Must match your GPU model and kernel version.
+	  
+	  Must match the local archive at:
+	  /work/tos/nvidia_driver-linux-x86_64-$(VERSION)-archive
+
+	  Examples: 590.48.01, 580.95.05, 600.xx.xx
+
+endif
+

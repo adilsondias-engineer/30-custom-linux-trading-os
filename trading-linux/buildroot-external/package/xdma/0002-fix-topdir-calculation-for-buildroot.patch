@@ -1,0 +1,20 @@
+--- a/XDMA/linux-kernel/xdma/Makefile
++++ b/XDMA/linux-kernel/xdma/Makefile
+@@ -16,7 +16,12 @@ ifneq ($(xvc_bar_offset),)
+ 	XVC_FLAGS += -D__XVC_BAR_OFFSET__=$(xvc_bar_offset)
+ endif
+ 
+ $(warning XVC_FLAGS: $(XVC_FLAGS).)
+ 
+-topdir := $(shell cd $(src)/.. && pwd)
++# Calculate topdir more reliably
++# Use M if available (set by kernel build system), otherwise fall back to $(src)
++# M is set by the kernel build system to the module source directory
++ifneq ($(M),)
++topdir := $(shell cd $(M)/.. && pwd)
++else
++topdir := $(shell cd $(src)/.. && pwd)
++endif
+ 
+ TARGET_MODULE:=xdma
+

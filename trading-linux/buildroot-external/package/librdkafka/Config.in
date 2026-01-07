@@ -1,0 +1,35 @@
+config BR2_PACKAGE_LIBRDKAFKA
+	bool "librdkafka"
+	help
+	  The Apache Kafka C/C++ client library.
+
+	  librdkafka is a C library implementation of the Apache Kafka
+	  protocol, providing Producer, Consumer and Admin clients.
+
+	  https://github.com/confluentinc/librdkafka
+
+if BR2_PACKAGE_LIBRDKAFKA
+
+config BR2_PACKAGE_LIBRDKAFKA_SSL
+	bool "Enable SSL support"
+	default y
+	depends on BR2_PACKAGE_OPENSSL
+	help
+	  Enable SSL/TLS support in librdkafka.
+
+config BR2_PACKAGE_LIBRDKAFKA_SASL
+	bool "Enable SASL support"
+	default y
+	depends on BR2_PACKAGE_LIBSASL2
+	help
+	  Enable SASL authentication support in librdkafka.
+
+config BR2_PACKAGE_LIBRDKAFKA_ZSTD
+	bool "Enable ZStd compression"
+	default y
+	depends on BR2_PACKAGE_ZSTD
+	help
+	  Enable ZStd compression support in librdkafka.
+
+endif
+

@@ -1,0 +1,49 @@
+config BR2_PACKAGE_XGBOOST
+	bool "XGBoost machine learning library"
+	depends on BR2_PACKAGE_CUDA_TRADING
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  XGBoost is an optimized distributed gradient boosting library.
+
+	  IMPORTANT: XGBoost 3.2 only works with CUDA 13.0, NOT 13.1.
+	  CUDA 13.1 has CCCL 3.1.2 which breaks XGBoost 3.x compatibility.
+	  
+	  REQUIRES LOCAL FILES:
+	  - /work/tos/xgboost (git repository)
+
+	  https://xgboost.readthedocs.io/
+
+if BR2_PACKAGE_XGBOOST
+
+config BR2_PACKAGE_XGBOOST_VERSION
+	string "XGBoost version"
+	default "3.2.0"
+	help
+	  XGBoost version to build.
+	  
+	  Use 3.2.0 (main branch) for latest features and CUDA 13.0 support.
+	  Stable release is 3.1.2, but 3.2.0-dev on main has better CUDA support.
+	  
+	  Must match the local git repository at /work/tos/xgboost
+
+config BR2_PACKAGE_XGBOOST_USE_CUDA
+	bool "Build with CUDA support"
+	default y
+	depends on BR2_PACKAGE_CUDA_TRADING
+	help
+	  Build XGBoost with CUDA/GPU acceleration support.
+	  
+	  Requires CUDA 13.0 (not 13.1) for XGBoost 3.2 compatibility.
+
+config BR2_PACKAGE_XGBOOST_CUDA_ARCH
+	string "CUDA architecture"
+	default "90"
+	depends on BR2_PACKAGE_XGBOOST_USE_CUDA
+	help
+	  CUDA compute capability architecture.
+	  
+	  RTX 5090 (Blackwell) = sm_100 or sm_90 for compatibility.
+	  Use "90" for RTX 5090 or "100" if available.
+
+endif
+

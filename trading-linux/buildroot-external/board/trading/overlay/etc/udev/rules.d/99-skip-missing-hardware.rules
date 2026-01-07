@@ -1,0 +1,9 @@
+# Skip udev rules for hardware that may not exist in VM
+# This prevents udev-worker from hanging waiting for devices
+
+# Skip waiting for specific PCI devices that might not exist
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", RUN+="/bin/true"
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", RUN+="/bin/true"
+
+# Set timeout for udev
+ENV{DEVTYPE}=="", RUN+="/bin/true"

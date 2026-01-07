@@ -1,0 +1,18 @@
+{
+    "log_level": "info",
+    "disruptor": {
+        "order_queue_path": "order_ring_mm",
+        "fill_queue_path": "fill_ring_oe"
+    },
+    "simulation": {
+        "latency_us": 50,
+        "fill_probability": 1.0,
+        "partial_fill_probability": 0.1
+    },
+    "performance": {
+        "enable_rt": true,
+        "cpu_cores": [17],
+        "rt_priority": 80
+    },
+    "_rt_allocation_notes": "CPU 17 for order execution (medium priority)"
+}

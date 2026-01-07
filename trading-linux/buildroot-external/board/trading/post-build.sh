@@ -68,7 +68,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
             sed "s/\$ROOT_UUID/$ROOT_FS_UUID/g" "$EFI_GRUB_CFG" > "$BINARIES_DIR/efi-part/EFI/trading/grub.cfg"
         fi
         
-        echo "✓ EFI grub.cfg copied to /EFI/trading/grub.cfg"
+        echo "EFI grub.cfg copied to /EFI/trading/grub.cfg"
         
         # Verify EFI grub.cfg is minimal (should be 3-4 lines like reference PC)
         EFI_GRUB_LINES=$(wc -l < "$BINARIES_DIR/efi-part/EFI/trading/grub.cfg" 2>/dev/null || echo "0")
@@ -77,7 +77,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
             echo "  This suggests overlay grub.cfg was incorrectly copied to EFI partition"
             exit 1
         fi
-        echo "✓ Verified EFI grub.cfg is minimal ($EFI_GRUB_LINES lines)"
+        echo "Verified EFI grub.cfg is minimal ($EFI_GRUB_LINES lines)"
         
         # Also replace $ROOT_UUID in root filesystem's grub.cfg (for ISO, use filesystem UUID)
         # This is the grub.cfg that gets loaded after EFI grub.cfg finds the root
@@ -88,13 +88,13 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
                 # Replace both the placeholder and change PARTUUID to UUID in kernel command line
                 sed -i "s/\$ROOT_UUID/$ROOT_FS_UUID/g" "$TARGET_DIR/boot/grub/grub.cfg"
                 sed -i "s/root=PARTUUID=/root=UUID=/g" "$TARGET_DIR/boot/grub/grub.cfg"
-                echo "✓ Replaced \$ROOT_UUID with filesystem UUID: $ROOT_FS_UUID (using UUID= instead of PARTUUID= for ISO)"
+                echo "Replaced \$ROOT_UUID with filesystem UUID: $ROOT_FS_UUID (using UUID= instead of PARTUUID= for ISO)"
             else
                 # Fallback: use label (for ISO boot)
                 echo "Warning: Using label for root filesystem grub.cfg (ISO boot)"
                 # For ISO, the label "tradingfs" is used in kernel command line
                 sed -i "s/root=PARTUUID=\$ROOT_UUID/root=LABEL=tradingfs/g" "$TARGET_DIR/boot/grub/grub.cfg"
-                echo "✓ Changed kernel command line to use LABEL=tradingfs for ISO boot"
+                echo "Changed kernel command line to use LABEL=tradingfs for ISO boot"
             fi
         fi
     else
@@ -106,7 +106,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
         echo "Copying GRUB EFI binary to /EFI/trading/grubx64.efi..."
         mkdir -p "$BINARIES_DIR/efi-part/EFI/trading"
         cp -f "$BINARIES_DIR/efi-part/EFI/BOOT/bootx64.efi" "$BINARIES_DIR/efi-part/EFI/trading/grubx64.efi"
-        echo "✓ GRUB EFI binary copied to /EFI/trading/grubx64.efi"
+        echo "GRUB EFI binary copied to /EFI/trading/grubx64.efi"
     else
         echo "Warning: GRUB EFI binary not found at $BINARIES_DIR/efi-part/EFI/BOOT/bootx64.efi"
     fi
@@ -126,7 +126,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
             if cp -v "$OVERLAY_GRUB_DIR/unicode.pf2" "$TARGET_DIR/boot/grub/unicode.pf2" 2>&1; then
                 if [ -f "$TARGET_DIR/boot/grub/unicode.pf2" ]; then
                     FONT_SIZE=$(stat -c%s "$TARGET_DIR/boot/grub/unicode.pf2" 2>/dev/null || echo "unknown")
-                    echo "✓ Copied GRUB font file to target filesystem (size: $FONT_SIZE bytes)"
+                    echo "Copied GRUB font file to target filesystem (size: $FONT_SIZE bytes)"
                 else
                     echo "ERROR: Font file copy reported success but file not found at target!"
                     echo "  Source: $OVERLAY_GRUB_DIR/unicode.pf2"
@@ -149,7 +149,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
         if [ -d "$OVERLAY_GRUB_DIR/fonts" ]; then
             mkdir -p "$TARGET_DIR/boot/grub/fonts"
             cp -rf "$OVERLAY_GRUB_DIR/fonts"/* "$TARGET_DIR/boot/grub/fonts/" 2>/dev/null || true
-            echo "✓ Copied GRUB fonts directory to target filesystem"
+            echo "Copied GRUB fonts directory to target filesystem"
         fi
         
         # Copy locale directory if it exists
@@ -158,7 +158,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
             cp -rf "$OVERLAY_GRUB_DIR/locale"/* "$TARGET_DIR/boot/grub/locale/" 2>/dev/null || true
             LOCALE_COUNT=$(ls -1 "$TARGET_DIR/boot/grub/locale"/*.mo 2>/dev/null | wc -l)
             if [ "$LOCALE_COUNT" -gt 0 ]; then
-                echo "✓ Copied $LOCALE_COUNT locale files to target filesystem"
+                echo "Copied $LOCALE_COUNT locale files to target filesystem"
             fi
         fi
     else
@@ -178,7 +178,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
         cp -f "$GRUB_MODULES_DIR"/*.mod "$BINARIES_DIR/efi-part/EFI/trading/x86_64-efi/" 2>/dev/null || true
         MODULE_COUNT=$(ls -1 "$BINARIES_DIR/efi-part/EFI/BOOT/x86_64-efi"/*.mod 2>/dev/null | wc -l)
         if [ "$MODULE_COUNT" -gt 0 ]; then
-            echo "✓ Copied $MODULE_COUNT GRUB module files to EFI partition"
+            echo "Copied $MODULE_COUNT GRUB module files to EFI partition"
         else
             echo "WARNING: No GRUB modules copied to EFI partition"
         fi
@@ -195,7 +195,7 @@ if [ -d "$BINARIES_DIR/efi-part/" ]; then
         cp -f "$GRUB_FONT_FILE" "$BINARIES_DIR/efi-part/EFI/BOOT/unicode.pf2" 2>/dev/null || true
         cp -f "$GRUB_FONT_FILE" "$BINARIES_DIR/efi-part/EFI/trading/unicode.pf2" 2>/dev/null || true
         if [ -f "$BINARIES_DIR/efi-part/EFI/BOOT/unicode.pf2" ]; then
-            echo "✓ Copied GRUB font file to EFI partition"
+            echo "Copied GRUB font file to EFI partition"
         else
             echo "WARNING: Failed to copy GRUB font file to EFI partition"
         fi
@@ -209,7 +209,7 @@ fi
 if [ -f "$CUSTOM_GRUB_CFG" ] && [ -d "$TARGET_DIR/boot/grub" ]; then
     echo "Ensuring BIOS grub.cfg is in target filesystem..."
     cp -f "$CUSTOM_GRUB_CFG" "$TARGET_DIR/boot/grub/grub.cfg" || true
-    echo "✓ BIOS grub.cfg updated (placeholders will be replaced by ISO build)"
+    echo "BIOS grub.cfg updated (placeholders will be replaced by ISO build)"
 fi
 
 # Copy GRUB modules to target filesystem /boot/grub (for ISO root filesystem boot)
@@ -221,7 +221,7 @@ if [ -d "$GRUB_MODULES_DIR" ]; then
     cp -f "$GRUB_MODULES_DIR"/*.mod "$TARGET_DIR/boot/grub/x86_64-efi/" 2>/dev/null || true
     MODULE_COUNT=$(ls -1 "$TARGET_DIR/boot/grub/x86_64-efi"/*.mod 2>/dev/null | wc -l)
     if [ "$MODULE_COUNT" -gt 0 ]; then
-        echo "✓ Copied $MODULE_COUNT GRUB module files to target filesystem /boot/grub/x86_64-efi"
+        echo "Copied $MODULE_COUNT GRUB module files to target filesystem /boot/grub/x86_64-efi"
     else
         echo "WARNING: No GRUB modules copied to target filesystem"
     fi
@@ -249,7 +249,7 @@ if [ -d "$TARGET_DIR/etc/ld.so.conf.d" ]; then
             # Ensure paths exist
             mkdir -p "$TARGET_DIR/opt/xgboost/lib" "$TARGET_DIR/opt/cuda/lib64"
         }
-        echo "✓ ldconfig cache updated"
+        echo "ldconfig cache updated"
     else
         echo "Warning: ldconfig not found in target (BR2_PACKAGE_GLIBC_UTILS=y must be enabled and Buildroot rebuilt)"
         echo "  Libraries will be found via LD_LIBRARY_PATH until ldconfig is installed"
@@ -260,18 +260,106 @@ if [ -d "$TARGET_DIR/etc/ld.so.conf.d" ]; then
     # Enable ldconfig.service to run on every boot (if ldconfig exists)
     if [ -f "$TARGET_DIR/etc/systemd/system/ldconfig.service" ]; then
         mkdir -p "$TARGET_DIR/etc/systemd/system/sysinit.target.wants"
-        ln -sf /etc/systemd/system/ldconfig.service \
-            "$TARGET_DIR/etc/systemd/system/sysinit.target.wants/ldconfig.service" 2>/dev/null || true
-        echo "✓ ldconfig.service enabled for boot-time execution"
+        if [ ! -L "$TARGET_DIR/etc/systemd/system/sysinit.target.wants/ldconfig.service" ]; then
+            ln -sf /etc/systemd/system/ldconfig.service \
+                "$TARGET_DIR/etc/systemd/system/sysinit.target.wants/ldconfig.service"
+            echo "ldconfig.service enabled for boot-time execution"
+        fi
     fi
-    
-    # Verify XGBoost library is present
-    if [ -f "$TARGET_DIR/opt/xgboost/lib/libxgboost.so" ]; then
-        echo "✓ XGBoost library found: $TARGET_DIR/opt/xgboost/lib/libxgboost.so"
-    else
-        echo "WARNING: XGBoost library not found at $TARGET_DIR/opt/xgboost/lib/libxgboost.so"
-        echo "  Run /work/tos/xgboost/build.sh to build and install XGBoost"
+fi
+
+# Enable essential systemd services by default (except trading-system.service)
+echo "Enabling essential systemd services..."
+
+# Enable systemd-networkd if it exists (for network management)
+if [ -f "$TARGET_DIR/usr/lib/systemd/system/systemd-networkd.service" ]; then
+    mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+    if [ ! -L "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/systemd-networkd.service" ]; then
+        ln -sf /usr/lib/systemd/system/systemd-networkd.service \
+            "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/systemd-networkd.service"
+        echo "  Enabled systemd-networkd.service"
     fi
+fi
+
+# Enable systemd-resolved if it exists (for DNS resolution)
+if [ -f "$TARGET_DIR/usr/lib/systemd/system/systemd-resolved.service" ]; then
+    mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+    if [ ! -L "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/systemd-resolved.service" ]; then
+        ln -sf /usr/lib/systemd/system/systemd-resolved.service \
+            "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/systemd-resolved.service"
+        echo "  Enabled systemd-resolved.service"
+    fi
+fi
+
+# Enable sshd if it exists (for SSH access)
+if [ -f "$TARGET_DIR/usr/lib/systemd/system/sshd.service" ] || \
+   [ -f "$TARGET_DIR/lib/systemd/system/sshd.service" ]; then
+    mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+    SSH_SERVICE=""
+    if [ -f "$TARGET_DIR/usr/lib/systemd/system/sshd.service" ]; then
+        SSH_SERVICE="/usr/lib/systemd/system/sshd.service"
+    elif [ -f "$TARGET_DIR/lib/systemd/system/sshd.service" ]; then
+        SSH_SERVICE="/lib/systemd/system/sshd.service"
+    fi
+    if [ -n "$SSH_SERVICE" ] && [ ! -L "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/sshd.service" ]; then
+        ln -sf "$SSH_SERVICE" \
+            "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/sshd.service"
+        echo "  Enabled sshd.service"
+    fi
+fi
+
+# Enable chronyd if it exists (for time synchronization)
+if [ -f "$TARGET_DIR/usr/lib/systemd/system/chronyd.service" ] || \
+   [ -f "$TARGET_DIR/lib/systemd/system/chronyd.service" ]; then
+    mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+    CHRONY_SERVICE=""
+    if [ -f "$TARGET_DIR/usr/lib/systemd/system/chronyd.service" ]; then
+        CHRONY_SERVICE="/usr/lib/systemd/system/chronyd.service"
+    elif [ -f "$TARGET_DIR/lib/systemd/system/chronyd.service" ]; then
+        CHRONY_SERVICE="/lib/systemd/system/chronyd.service"
+    fi
+    if [ -n "$CHRONY_SERVICE" ] && [ ! -L "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/chronyd.service" ]; then
+        ln -sf "$CHRONY_SERVICE" \
+            "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/chronyd.service"
+        echo "  Enabled chronyd.service"
+    fi
+fi
+
+# Enable dbus if it exists (required for many services)
+if [ -f "$TARGET_DIR/usr/lib/systemd/system/dbus.service" ] || \
+   [ -f "$TARGET_DIR/lib/systemd/system/dbus.service" ]; then
+    mkdir -p "$TARGET_DIR/etc/systemd/system/sysinit.target.wants"
+    DBUS_SERVICE=""
+    if [ -f "$TARGET_DIR/usr/lib/systemd/system/dbus.service" ]; then
+        DBUS_SERVICE="/usr/lib/systemd/system/dbus.service"
+    elif [ -f "$TARGET_DIR/lib/systemd/system/dbus.service" ]; then
+        DBUS_SERVICE="/lib/systemd/system/dbus.service"
+    fi
+    if [ -n "$DBUS_SERVICE" ] && [ ! -L "$TARGET_DIR/etc/systemd/system/sysinit.target.wants/dbus.service" ]; then
+        ln -sf "$DBUS_SERVICE" \
+            "$TARGET_DIR/etc/systemd/system/sysinit.target.wants/dbus.service"
+        echo "  Enabled dbus.service"
+    fi
+fi
+
+# Enable systemd-logind if it exists (for user sessions)
+if [ -f "$TARGET_DIR/usr/lib/systemd/system/systemd-logind.service" ]; then
+    mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+    if [ ! -L "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/systemd-logind.service" ]; then
+        ln -sf /usr/lib/systemd/system/systemd-logind.service \
+            "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/systemd-logind.service"
+        echo "  Enabled systemd-logind.service"
+    fi
+fi
+
+echo "Essential systemd services enabled (trading-system.service excluded)"
+
+# Verify XGBoost library is present
+if [ -f "$TARGET_DIR/opt/xgboost/lib/libxgboost.so" ]; then
+    echo "XGBoost library found: $TARGET_DIR/opt/xgboost/lib/libxgboost.so"
+else
+    echo "WARNING: XGBoost library not found at $TARGET_DIR/opt/xgboost/lib/libxgboost.so"
+    echo "  Run /work/tos/xgboost/build.sh to build and install XGBoost"
 fi
 
 # Ensure XGBoost is in target filesystem
@@ -282,11 +370,11 @@ if [ ! -d "$TARGET_DIR/opt/xgboost" ] || [ ! -f "$TARGET_DIR/opt/xgboost/lib/lib
     echo "  XGBoost should be built and copied to target/opt/xgboost before Buildroot build"
     echo "  Run: /work/tos/xgboost/build.sh to build and install XGBoost"
 else
-    echo "✓ XGBoost found in target filesystem: $TARGET_DIR/opt/xgboost"
+    echo "XGBoost found in target filesystem: $TARGET_DIR/opt/xgboost"
     
     # Verify the library exists and is readable
     if [ -f "$TARGET_DIR/opt/xgboost/lib/libxgboost.so" ]; then
-        echo "✓ XGBoost library verified: $(ls -lh "$TARGET_DIR/opt/xgboost/lib/libxgboost.so" | awk '{print $5}')"
+        echo "XGBoost library verified: $(ls -lh "$TARGET_DIR/opt/xgboost/lib/libxgboost.so" | awk '{print $5}')"
     fi
 fi
 
@@ -309,7 +397,7 @@ if [ -d "$TARGET_DIR/opt/xgboost" ]; then
             mkdir -p "$SYSROOT_DIR/opt"
             cp -rf "$TARGET_DIR/opt/xgboost" "$SYSROOT_DIR/opt/" 2>/dev/null || true
             if [ -d "$SYSROOT_DIR/opt/xgboost" ] && [ -f "$SYSROOT_DIR/opt/xgboost/lib/libxgboost.so" ]; then
-                echo "✓ XGBoost copied to sysroot: $SYSROOT_DIR/opt/xgboost"
+                echo "XGBoost copied to sysroot: $SYSROOT_DIR/opt/xgboost"
             else
                 echo "WARNING: Failed to copy XGBoost to sysroot"
             fi
@@ -382,7 +470,7 @@ if [ -n "$HOST_DIR" ] && [ -d "$HOST_DIR" ]; then
                 
                 # Verify it's in target
                 if [ -f "$TARGET_DIR/usr/lib/libgomp.so.1" ] || [ -f "$TARGET_DIR/usr/lib/libgomp.so" ]; then
-                    echo "✓ libgomp installed in target filesystem"
+                    echo "libgomp installed in target filesystem"
                 else
                     echo "WARNING: libgomp not found in target after copy attempt"
                     echo "  GCC lib dir: $GCC_VERSION_DIR"
@@ -391,7 +479,7 @@ if [ -n "$HOST_DIR" ] && [ -d "$HOST_DIR" ]; then
                 
                 # Verify it's in sysroot
                 if [ -d "$SYSROOT_DIR" ] && [ -f "$SYSROOT_DIR/usr/lib/libgomp.so.1" ] || [ -f "$SYSROOT_DIR/usr/lib/libgomp.so" ]; then
-                    echo "✓ libgomp installed in sysroot for compilation"
+                    echo "libgomp installed in sysroot for compilation"
                 else
                     echo "WARNING: libgomp not found in sysroot after copy attempt"
                 fi
@@ -411,7 +499,7 @@ if [ -d "$TARGET_DIR/opt/trading" ]; then
     chown -R 1000:1000 "$TARGET_DIR/opt/trading" 2>/dev/null || {
         echo "Warning: Failed to set ownership of /opt/trading (may need to run manually on target)"
     }
-    echo "✓ /opt/trading ownership set to trading:trading (1000:1000)"
+    echo "/opt/trading ownership set to trading:trading (1000:1000)"
 fi
 
 # Install development tools on target (cmake and GCC)
@@ -434,7 +522,7 @@ if [ -n "$HOST_DIR" ] && [ -d "$HOST_DIR" ]; then
         mkdir -p "$TARGET_DIR/usr/bin"
         cp -f "$HOST_DIR/bin/cmake" "$TARGET_DIR/usr/bin/cmake"
         chmod 755 "$TARGET_DIR/usr/bin/cmake"
-        echo "✓ cmake installed on target"
+        echo "cmake installed on target"
     else
         echo "Warning: cmake not found in host directory"
     fi
@@ -509,7 +597,7 @@ if [ -n "$HOST_DIR" ] && [ -d "$HOST_DIR" ]; then
         fi
     fi
     
-    echo "✓ Development tools (cmake, gcc, g++) installed on target"
+    echo "Development tools (cmake, gcc, g++) installed on target"
 fi
 
 # Configure EGL/GBM to use NVIDIA proprietary driver instead of Mesa/nouveau
@@ -583,10 +671,15 @@ if [ ! -f "$TARGET_DIR/etc/profile.d/nvidia-egl.sh" ]; then
 # This is critical for SDL2 kmsdrm to work with NVIDIA GPUs
 
 # Set library path to include /usr/lib64 where NVIDIA libraries are installed
+# This ensures EGL libraries are found by SDL2 and other applications
 export LD_LIBRARY_PATH="/usr/lib64:/usr/lib:${LD_LIBRARY_PATH}"
 
-# Force EGL to use NVIDIA vendor
+# Force EGL to use NVIDIA vendor via GLVND
+# GLVND will read /usr/share/glvnd/egl_vendor.d/10_nvidia.json
 export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+
+# Alternative: Direct EGL library path (fallback if GLVND doesn't work)
+# export __EGL_LIBRARY_PATH=/usr/lib64:/usr/lib
 
 # Prevent Mesa from loading nouveau driver or kmsro
 export MESA_LOADER_DRIVER_OVERRIDE=nvidia
@@ -594,11 +687,15 @@ export MESA_LOADER_DRIVER_OVERRIDE=nvidia
 # Force NVIDIA GBM backend (libnvidia-egl-gbm.so)
 export GBM_BACKEND=nvidia-drm
 
-# Set EGL platform to device (for kmsdrm)
+# Set EGL platform to device (for kmsdrm/SDL2)
 export EGL_PLATFORM=device
 
 # Disable Mesa's kmsro render-only driver
 export MESA_GL_VERSION_OVERRIDE=4.6
+
+# Ensure EGL can initialize by setting these additional variables
+export EGL_DRIVER=egl_nvidia
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
 EOF
     chmod 755 "$TARGET_DIR/etc/profile.d/nvidia-egl.sh"
     echo "  Created /etc/profile.d/nvidia-egl.sh to force NVIDIA driver"
@@ -647,42 +744,103 @@ if [ -d "$TARGET_DIR/usr/lib64" ]; then
         fi
     done
     echo "  Created symlinks from /usr/lib to /usr/lib64 for NVIDIA libraries"
+    
+    # Add /usr/lib64 to ld.so.conf so libraries are found automatically
+    if [ -d "$TARGET_DIR/etc/ld.so.conf.d" ]; then
+        if [ ! -f "$TARGET_DIR/etc/ld.so.conf.d/nvidia.conf" ]; then
+            echo "/usr/lib64" > "$TARGET_DIR/etc/ld.so.conf.d/nvidia.conf"
+            echo "  Added /usr/lib64 to ld.so.conf.d/nvidia.conf"
+        fi
+    fi
 fi
 
 # Ensure nvidia-smi can find its libraries
-# nvidia-smi looks for libraries in LD_LIBRARY_PATH or standard paths
-if [ -f "$TARGET_DIR/usr/bin/nvidia-smi" ] || [ -f "$TARGET_DIR/usr/sbin/nvidia-smi" ]; then
-    echo "  nvidia-smi binary found"
-    # Create wrapper script if needed to set LD_LIBRARY_PATH
-    if [ ! -f "$TARGET_DIR/usr/local/bin/nvidia-smi-wrapper.sh" ]; then
-        mkdir -p "$TARGET_DIR/usr/local/bin"
-        cat > "$TARGET_DIR/usr/local/bin/nvidia-smi-wrapper.sh" << 'EOF'
+# Replace nvidia-smi with a wrapper that sets LD_LIBRARY_PATH
+if [ -f "$TARGET_DIR/usr/bin/nvidia-smi" ]; then
+    echo "  Creating nvidia-smi wrapper..."
+    # Backup original nvidia-smi
+    if [ ! -f "$TARGET_DIR/usr/bin/nvidia-smi.real" ]; then
+        mv "$TARGET_DIR/usr/bin/nvidia-smi" "$TARGET_DIR/usr/bin/nvidia-smi.real"
+    fi
+    # Create wrapper script
+    cat > "$TARGET_DIR/usr/bin/nvidia-smi" << 'EOF'
 #!/bin/sh
 # Wrapper for nvidia-smi to ensure libraries are found
 export LD_LIBRARY_PATH="/usr/lib64:/usr/lib:${LD_LIBRARY_PATH}"
-exec /usr/bin/nvidia-smi "$@"
+exec /usr/bin/nvidia-smi.real "$@"
 EOF
-        chmod 755 "$TARGET_DIR/usr/local/bin/nvidia-smi-wrapper.sh"
-        echo "  Created nvidia-smi wrapper script"
+    chmod 755 "$TARGET_DIR/usr/bin/nvidia-smi"
+    echo "  Created nvidia-smi wrapper script"
+elif [ -f "$TARGET_DIR/usr/sbin/nvidia-smi" ]; then
+    echo "  Creating nvidia-smi wrapper in /usr/sbin..."
+    # Backup original nvidia-smi
+    if [ ! -f "$TARGET_DIR/usr/sbin/nvidia-smi.real" ]; then
+        mv "$TARGET_DIR/usr/sbin/nvidia-smi" "$TARGET_DIR/usr/sbin/nvidia-smi.real"
     fi
+    # Create wrapper script
+    cat > "$TARGET_DIR/usr/sbin/nvidia-smi" << 'EOF'
+#!/bin/sh
+# Wrapper for nvidia-smi to ensure libraries are found
+export LD_LIBRARY_PATH="/usr/lib64:/usr/lib:${LD_LIBRARY_PATH}"
+exec /usr/sbin/nvidia-smi.real "$@"
+EOF
+    chmod 755 "$TARGET_DIR/usr/sbin/nvidia-smi"
+    echo "  Created nvidia-smi wrapper script in /usr/sbin"
 fi
 
 # Create udev rules for NVIDIA device nodes with proper permissions
 # This ensures /dev/nvidia* devices are accessible
-if [ ! -f "$TARGET_DIR/etc/udev/rules.d/70-nvidia.rules" ]; then
-    mkdir -p "$TARGET_DIR/etc/udev/rules.d"
-    cat > "$TARGET_DIR/etc/udev/rules.d/70-nvidia.rules" << 'EOF'
-# NVIDIA device nodes
-KERNEL=="nvidia", MODE="0666"
-KERNEL=="nvidia_uvm", MODE="0666"
-KERNEL=="nvidia_uvm_tools", MODE="0666"
-KERNEL=="nvidiactl", MODE="0666"
-KERNEL=="nvidia-modeset", MODE="0666"
-KERNEL=="nvidia-fabricdev", MODE="0666"
-KERNEL=="nvidia-caps", MODE="0666"
-SUBSYSTEM=="drm", KERNEL=="card*", ATTRS{vendor}=="0x10de", MODE="0666"
+mkdir -p "$TARGET_DIR/etc/udev/rules.d"
+cat > "$TARGET_DIR/etc/udev/rules.d/70-nvidia.rules" << 'EOF'
+# NVIDIA device nodes - ensure they are created with proper permissions
+KERNEL=="nvidia", MODE="0666", GROUP="video"
+KERNEL=="nvidia_uvm", MODE="0666", GROUP="video"
+KERNEL=="nvidia_uvm_tools", MODE="0666", GROUP="video"
+KERNEL=="nvidiactl", MODE="0666", GROUP="video"
+KERNEL=="nvidia-modeset", MODE="0666", GROUP="video"
+KERNEL=="nvidia-fabricdev", MODE="0666", GROUP="video"
+KERNEL=="nvidia-caps", MODE="0666", GROUP="video"
+SUBSYSTEM=="drm", KERNEL=="card*", ATTRS{vendor}=="0x10de", MODE="0666", GROUP="video"
 EOF
-    echo "  Created udev rules for NVIDIA device nodes"
+echo "  Created/updated udev rules for NVIDIA device nodes"
+
+# Create systemd service to ensure NVIDIA device nodes are created at boot
+# This is needed because udev might not create them if the driver loads before udev is ready
+mkdir -p "$TARGET_DIR/etc/systemd/system"
+cat > "$TARGET_DIR/etc/systemd/system/nvidia-devices.service" << 'EOF'
+[Unit]
+Description=Create NVIDIA device nodes
+After=systemd-udev-settle.service
+Wants=systemd-udev-settle.service
+
+[Service]
+Type=oneshot
+# Trigger udev to create device nodes for NVIDIA
+ExecStart=/bin/sh -c 'udevadm trigger --subsystem-match=char --action=add || true; sleep 1; if [ ! -c /dev/nvidiactl ]; then for i in 0 1 2 3 4 5 6 7 8 9; do if [ ! -c /dev/nvidia$i ]; then mknod -m 666 /dev/nvidia$i c 195 $i 2>/dev/null || true; fi; done; mknod -m 666 /dev/nvidiactl c 195 255 2>/dev/null || true; mknod -m 666 /dev/nvidia-uvm c 195 253 2>/dev/null || true; mknod -m 666 /dev/nvidia-modeset c 195 254 2>/dev/null || true; fi'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+echo "  Created systemd service to ensure NVIDIA device nodes are created"
+
+# Enable the service by creating a symlink
+mkdir -p "$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+if [ ! -L "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/nvidia-devices.service" ]; then
+    ln -sf /etc/systemd/system/nvidia-devices.service \
+        "$TARGET_DIR/etc/systemd/system/multi-user.target.wants/nvidia-devices.service"
+    echo "  Enabled nvidia-devices.service"
+fi
+
+# Also add LD_LIBRARY_PATH to /etc/environment for system-wide effect
+if [ -f "$TARGET_DIR/etc/environment" ]; then
+    if ! grep -q "^LD_LIBRARY_PATH=" "$TARGET_DIR/etc/environment"; then
+        echo "LD_LIBRARY_PATH=/usr/lib64:/usr/lib" >> "$TARGET_DIR/etc/environment"
+        echo "  Added LD_LIBRARY_PATH to /etc/environment"
+    fi
+else
+    echo "LD_LIBRARY_PATH=/usr/lib64:/usr/lib" > "$TARGET_DIR/etc/environment"
+    echo "  Created /etc/environment with LD_LIBRARY_PATH"
 fi
 
 # Disable Mesa's EGL completely and use only NVIDIA's EGL
@@ -692,10 +850,13 @@ if [ -f "$TARGET_DIR/usr/lib/libEGL_nvidia.so.590.48.01" ] || [ -f "$TARGET_DIR/
     
     # Find NVIDIA EGL library
     NVIDIA_EGL=""
+    NVIDIA_EGL_PATH=""
     if [ -f "$TARGET_DIR/usr/lib64/libEGL_nvidia.so.590.48.01" ]; then
         NVIDIA_EGL="$TARGET_DIR/usr/lib64/libEGL_nvidia.so.590.48.01"
+        NVIDIA_EGL_PATH="/usr/lib64/libEGL_nvidia.so.590.48.01"
     elif [ -f "$TARGET_DIR/usr/lib/libEGL_nvidia.so.590.48.01" ]; then
         NVIDIA_EGL="$TARGET_DIR/usr/lib/libEGL_nvidia.so.590.48.01"
+        NVIDIA_EGL_PATH="/usr/lib/libEGL_nvidia.so.590.48.01"
     fi
     
     if [ -n "$NVIDIA_EGL" ]; then
@@ -706,10 +867,28 @@ if [ -f "$TARGET_DIR/usr/lib/libEGL_nvidia.so.590.48.01" ] || [ -f "$TARGET_DIR/
         # Create symlinks to NVIDIA's EGL
         mkdir -p "$TARGET_DIR/usr/lib"
         if [ -f "$TARGET_DIR/usr/lib64/libEGL_nvidia.so.590.48.01" ]; then
+            # Create symlinks from /usr/lib to /usr/lib64
             ln -sf ../lib64/libEGL_nvidia.so.590.48.01 "$TARGET_DIR/usr/lib/libEGL.so.1.0.0"
             ln -sf libEGL.so.1.0.0 "$TARGET_DIR/usr/lib/libEGL.so.1"
             ln -sf libEGL.so.1 "$TARGET_DIR/usr/lib/libEGL.so"
+            echo "  Created symlinks to NVIDIA EGL in /usr/lib -> /usr/lib64"
+        elif [ -f "$TARGET_DIR/usr/lib/libEGL_nvidia.so.590.48.01" ]; then
+            # Create symlinks directly in /usr/lib
+            ln -sf libEGL_nvidia.so.590.48.01 "$TARGET_DIR/usr/lib/libEGL.so.1.0.0"
+            ln -sf libEGL.so.1.0.0 "$TARGET_DIR/usr/lib/libEGL.so.1"
+            ln -sf libEGL.so.1 "$TARGET_DIR/usr/lib/libEGL.so"
             echo "  Created symlinks to NVIDIA EGL in /usr/lib"
+        fi
+        
+        # Also ensure libEGL.so.1 exists in /usr/lib64 if that's where the library is
+        if [ -f "$TARGET_DIR/usr/lib64/libEGL_nvidia.so.590.48.01" ]; then
+            mkdir -p "$TARGET_DIR/usr/lib64"
+            if [ ! -e "$TARGET_DIR/usr/lib64/libEGL.so.1" ]; then
+                ln -sf libEGL_nvidia.so.590.48.01 "$TARGET_DIR/usr/lib64/libEGL.so.1.0.0"
+                ln -sf libEGL.so.1.0.0 "$TARGET_DIR/usr/lib64/libEGL.so.1"
+                ln -sf libEGL.so.1 "$TARGET_DIR/usr/lib64/libEGL.so"
+                echo "  Created symlinks to NVIDIA EGL in /usr/lib64"
+            fi
         fi
     fi
 fi
@@ -745,10 +924,10 @@ EOF
 echo "  Created drirc configuration to disable kmsro"
 
 # Update EGL vendor configuration to use absolute path
-if [ -f "$TARGET_DIR/usr/share/glvnd/egl_vendor.d/10_nvidia.json" ]; then
-    # Update to use absolute path or relative path that works
-    if [ -f "$TARGET_DIR/usr/lib64/libEGL_nvidia.so.590.48.01" ]; then
-        cat > "$TARGET_DIR/usr/share/glvnd/egl_vendor.d/10_nvidia.json" << 'EOF'
+# Ensure EGL vendor configuration exists and points to the correct NVIDIA EGL library
+mkdir -p "$TARGET_DIR/usr/share/glvnd/egl_vendor.d"
+if [ -f "$TARGET_DIR/usr/lib64/libEGL_nvidia.so.590.48.01" ]; then
+    cat > "$TARGET_DIR/usr/share/glvnd/egl_vendor.d/10_nvidia.json" << 'EOF'
 {
     "file_format_version": "1.0.0",
     "ICD": {
@@ -756,9 +935,27 @@ if [ -f "$TARGET_DIR/usr/share/glvnd/egl_vendor.d/10_nvidia.json" ]; then
     }
 }
 EOF
-        echo "  Updated EGL vendor config with absolute path"
+    echo "  Created/updated EGL vendor config with absolute path to /usr/lib64/libEGL_nvidia.so.590.48.01"
+elif [ -f "$TARGET_DIR/usr/lib/libEGL_nvidia.so.590.48.01" ]; then
+    cat > "$TARGET_DIR/usr/share/glvnd/egl_vendor.d/10_nvidia.json" << 'EOF'
+{
+    "file_format_version": "1.0.0",
+    "ICD": {
+        "library_path": "/usr/lib/libEGL_nvidia.so.590.48.01"
+    }
+}
+EOF
+    echo "  Created/updated EGL vendor config with absolute path to /usr/lib/libEGL_nvidia.so.590.48.01"
+fi
+
+# Ensure libEGL.so can be found by setting up proper library paths
+# Add /usr/lib64 to ld.so.conf if not already present
+if [ -d "$TARGET_DIR/etc/ld.so.conf.d" ]; then
+    if [ ! -f "$TARGET_DIR/etc/ld.so.conf.d/nvidia.conf" ] || ! grep -q "/usr/lib64" "$TARGET_DIR/etc/ld.so.conf.d/nvidia.conf" 2>/dev/null; then
+        echo "/usr/lib64" > "$TARGET_DIR/etc/ld.so.conf.d/nvidia.conf"
+        echo "  Added /usr/lib64 to ld.so.conf.d/nvidia.conf"
     fi
 fi
 
-echo "✓ EGL/GBM configured to use NVIDIA proprietary driver (nouveau blacklisted)"
-echo "✓ NVIDIA library paths fixed for nvidia-smi and applications"
+echo "EGL/GBM configured to use NVIDIA proprietary driver (nouveau blacklisted)"
+echo "NVIDIA library paths fixed for nvidia-smi and applications"

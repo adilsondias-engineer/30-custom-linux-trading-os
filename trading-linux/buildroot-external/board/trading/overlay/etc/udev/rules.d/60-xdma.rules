@@ -1,0 +1,15 @@
+# XDMA device permissions
+# Allow non-root users to access XDMA devices
+# This rule applies to all XDMA device files created by the driver
+
+# All XDMA devices - set world-readable/writable (0666)
+# This allows the trading user to access devices without being root
+SUBSYSTEM=="xdma", MODE="0666"
+
+# Specific device patterns (more explicit, but SUBSYSTEM should catch all)
+KERNEL=="xdma[0-9]*_c2h_[0-9]*", MODE="0666"
+KERNEL=="xdma[0-9]*_h2c_[0-9]*", MODE="0666"
+KERNEL=="xdma[0-9]*_user", MODE="0666"
+KERNEL=="xdma[0-9]*_control", MODE="0666"
+KERNEL=="xdma[0-9]*_events_[0-9]*", MODE="0666"
+

@@ -1,0 +1,54 @@
+{
+    "display": {
+        "width": 5120,
+        "height": 1440,
+        "fullscreen": true,
+        "fps_limit": 30
+    },
+    "processes": {
+        "p24": {
+            "name": "Order Gateway",
+            "executable": "/opt/trading/bin/order_gateway",
+            "config": "/opt/trading/config/p24_config.json",
+            "working_dir": "/opt/trading",
+            "cpu_core": 14,
+            "rt_priority": 90,
+            "_note": "PCIe DMA - highest priority"
+        },
+        "p25": {
+            "name": "Market Maker",
+            "executable": "/opt/trading/bin/market_maker",
+            "config": "/opt/trading/config/p25_config.json",
+            "working_dir": "/opt/trading",
+            "cpu_core": 15,
+            "rt_priority": 85,
+            "_note": "XGBoost inference - high priority"
+        },
+        "p26": {
+            "name": "Execution Engine",
+            "executable": "/opt/trading/bin/order_execution",
+            "config": "/opt/trading/config/p26_config.json",
+            "working_dir": "/opt/trading",
+            "cpu_core": 17,
+            "rt_priority": 80,
+            "_note": "Order execution - medium priority"
+        }
+    },
+    "ui": {
+        "cpu_core": 18,
+        "rt_priority": 50,
+        "_note": "UI rendering - lower priority than trading"
+    },
+    "assets": {
+        "logo": "/opt/trading/assets/logo2.png",
+        "font": "/opt/trading/assets/DejaVuSans.ttf"
+    },
+    "_rt_cpu_allocation": {
+        "14": "P24 Order Gateway (PCIe DMA)",
+        "15": "P25 Market Maker (main thread)",
+        "16": "P25 Market Maker (XGBoost)",
+        "17": "P26 Order Execution",
+        "18": "P29 Trading UI",
+        "19-22": "Reserved for future use"
+    }
+}

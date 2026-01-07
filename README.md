@@ -1,5 +1,15 @@
 # Project 30: TradingOS - Custom Linux Distribution for FPGA Trading
 
+## Part of FPGA Trading Systems Portfolio
+
+This project is part of a complete end-to-end trading system:
+- **Main Repository:** [fpga-trading-systems](https://github.com/adilsondias-engineer/fpga-trading-systems)
+- **Project Number:** 30 of 30
+- **Category:** Linux Distribution
+- **Dependencies:** Projects 23-29 (Complete trading system stack)
+
+---
+
 A minimal Linux distribution built with Buildroot, optimized for low-latency FPGA trading systems with NVIDIA GPU acceleration and PCIe passthrough.
 
 ## Overview

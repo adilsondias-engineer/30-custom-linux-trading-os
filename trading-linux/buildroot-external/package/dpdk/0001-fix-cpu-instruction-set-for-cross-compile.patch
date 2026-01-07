@@ -1,0 +1,11 @@
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -115,7 +115,7 @@ platform = get_option('platform')
+ 
+ # set the cpu_instruction_set and cflags for it
+ if meson.is_cross_build()
+-    cpu_instruction_set = host_machine.cpu()
++    cpu_instruction_set = get_option('cpu_instruction_set')
+ else
+     cpu_instruction_set = get_option('cpu_instruction_set')
+     machine = get_option('machine')

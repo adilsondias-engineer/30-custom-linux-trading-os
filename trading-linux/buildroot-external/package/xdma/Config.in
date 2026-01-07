@@ -1,0 +1,24 @@
+config BR2_PACKAGE_XDMA
+	bool "Xilinx XDMA driver"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Xilinx DMA (XDMA) driver for PCIe-based FPGA communication.
+	  
+	  This driver enables high-speed DMA transfers between the host
+	  and FPGA over PCIe Gen2 x4.
+	  
+	  REQUIRES LOCAL FILES:
+	  - /work/tos/dma_ip_drivers (git repository or extracted directory)
+
+	  https://github.com/Xilinx/dma_ip_drivers
+
+if BR2_PACKAGE_XDMA
+
+config BR2_PACKAGE_XDMA_VERSION
+	string "XDMA driver version"
+	default "2023.1"
+	help
+	  XDMA driver version/tag (for reference only, uses local files).
+
+endif
+
