@@ -1,0 +1,18 @@
+config BR2_PACKAGE_MESON_TARGET
+	bool "meson-target"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_PYTHON3_ZLIB
+	help
+	  Meson build system for target.
+	  
+	  Meson is an open source build system meant to be both extremely
+	  fast, and, even more importantly, as user friendly as possible.
+	  
+	  This package installs meson on the target system, allowing you
+	  to build software directly on the target.
+	  
+	  https://mesonbuild.com/
+
+comment "meson-target needs python3"
+	depends on !BR2_PACKAGE_PYTHON3

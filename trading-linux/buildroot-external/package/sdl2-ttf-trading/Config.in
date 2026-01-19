@@ -1,0 +1,14 @@
+config BR2_PACKAGE_SDL2_TTF_TRADING
+	bool "SDL2_ttf (Trading OS custom - from local source)"
+	depends on BR2_PACKAGE_SDL2_TRADING
+	help
+	  SDL2_ttf library for rendering TrueType fonts
+	  
+	  This custom build ensures compatibility with sdl2-trading package.
+	  Built from local source at /work/tos/SDL_ttf.
+	  
+	  REQUIRES LOCAL SOURCE:
+	  - /work/tos/SDL_ttf (SDL2_ttf source directory)
+	  
+	  https://github.com/libsdl-org/SDL_ttf
+

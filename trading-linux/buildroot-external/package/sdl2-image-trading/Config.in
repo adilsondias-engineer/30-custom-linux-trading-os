@@ -1,0 +1,14 @@
+config BR2_PACKAGE_SDL2_IMAGE_TRADING
+	bool "SDL2_image (Trading OS custom - from local source)"
+	depends on BR2_PACKAGE_SDL2_TRADING
+	help
+	  SDL2_image library for loading images (PNG, JPEG, etc.)
+	  
+	  This custom build ensures compatibility with sdl2-trading package.
+	  Built from local source at /work/tos/SDL_image.
+	  
+	  REQUIRES LOCAL SOURCE:
+	  - /work/tos/SDL_image (SDL2_image source directory)
+	  
+	  https://github.com/libsdl-org/SDL_image
+

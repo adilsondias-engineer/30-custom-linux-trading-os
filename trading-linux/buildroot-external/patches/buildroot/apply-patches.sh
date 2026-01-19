@@ -88,6 +88,6 @@ fi
 echo ""
 echo "Patches applied successfully!"
 echo ""
-echo "Buildroot can now be configured with kernel 6.17.8 support."
+echo "You can now configure Buildroot with kernel 6.17.8 support."
 echo "Run: BR2_EXTERNAL=/work/tos/trading-linux/buildroot-external make trading_defconfig"
 

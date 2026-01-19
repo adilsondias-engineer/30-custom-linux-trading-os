@@ -17,7 +17,7 @@ NVIDIA_DRIVER_TRADING_LOCAL_EXTRACTED =  /work/tos/nvidia_driver-linux-x86_64-59
 NVIDIA_DRIVER_TRADING_OPEN_SOURCE_DIR = $(NVIDIA_DRIVER_TRADING_LOCAL_DIR)/open-gpu-kernel-modules
 
 # Use local method - point to package directory with dummy file
-# Since files are already extracted, they are copied in BUILD_CMDS
+# Since files are already extracted, we'll copy them in BUILD_CMDS
 NVIDIA_DRIVER_TRADING_SITE = $(BR2_EXTERNAL_TRADING_PATH)/package/nvidia-driver-trading
 NVIDIA_DRIVER_TRADING_SOURCE = dummy
 NVIDIA_DRIVER_TRADING_SITE_METHOD = local
@@ -84,11 +84,11 @@ define NVIDIA_DRIVER_TRADING_INSTALL_TARGET_CMDS
 	# NVIDIA archive structure: bin/ and sbin/ at root level (not usr/bin, usr/sbin)
 	if [ -d "$(@D)/proprietary/bin" ]; then \
 		$(INSTALL) -d $(TARGET_DIR)/usr/bin; \
-		cp -a $(@D)/proprietary/bin/* $(TARGET_DIR)/usr/bin/; \
+		cp -af $(@D)/proprietary/bin/* $(TARGET_DIR)/usr/bin/; \
 	fi
 	if [ -d "$(@D)/proprietary/sbin" ]; then \
 		$(INSTALL) -d $(TARGET_DIR)/usr/sbin; \
-		cp -a $(@D)/proprietary/sbin/* $(TARGET_DIR)/usr/sbin/; \
+		cp -af $(@D)/proprietary/sbin/* $(TARGET_DIR)/usr/sbin/; \
 	fi
 	# Also check for usr/bin and usr/sbin (if archive structure differs)
 	if [ -d "$(@D)/proprietary/usr/bin" ]; then \
@@ -112,8 +112,23 @@ define NVIDIA_DRIVER_TRADING_INSTALL_TARGET_CMDS
 		$(INSTALL) -d $(TARGET_DIR)/lib/firmware/nvidia/$(NVIDIA_DRIVER_TRADING_VERSION); \
 		cp -a $(@D)/proprietary/lib/firmware/nvidia/* $(TARGET_DIR)/lib/firmware/nvidia/$(NVIDIA_DRIVER_TRADING_VERSION)/; \
 	fi
+	
+	# Create required symlinks for NVIDIA libraries (GLVND compatibility)
+	# The NVIDIA installer doesn't create these, but they're needed for GLVND
+	if [ -f "$(TARGET_DIR)/usr/lib64/libEGL_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION)" ]; then \
+		ln -sf libEGL_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION) $(TARGET_DIR)/usr/lib64/libEGL_nvidia.so.0; \
+	fi
+	if [ -f "$(TARGET_DIR)/usr/lib64/libGLX_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION)" ]; then \
+		ln -sf libGLX_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION) $(TARGET_DIR)/usr/lib64/libGLX_nvidia.so.0; \
+	fi
+	if [ -f "$(TARGET_DIR)/usr/lib64/libGLESv1_CM_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION)" ]; then \
+		ln -sf libGLESv1_CM_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION) $(TARGET_DIR)/usr/lib64/libGLESv1_CM_nvidia.so.1; \
+	fi
+	if [ -f "$(TARGET_DIR)/usr/lib64/libGLESv2_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION)" ]; then \
+		ln -sf libGLESv2_nvidia.so.$(NVIDIA_DRIVER_TRADING_VERSION) $(TARGET_DIR)/usr/lib64/libGLESv2_nvidia.so.2; \
+	fi
 endef
 
-# Don't use kernel-module infrastructure - built manually in BUILD_CMDS
+# Don't use kernel-module infrastructure - we build manually in BUILD_CMDS
 # $(eval $(kernel-module))
 $(eval $(generic-package))

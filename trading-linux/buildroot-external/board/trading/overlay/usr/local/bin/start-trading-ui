@@ -1,0 +1,12 @@
+#!/bin/sh
+# Helper script to start the Trading UI in Wayland environment
+# Usage: start-trading-ui
+
+# Ensure Wayland environment is set
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/1000}"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
+export SDL_VIDEODRIVER=wayland
+export EGL_PLATFORM=wayland
+
+# Launch trading UI
+exec /opt/trading/bin/trading_ui "$@"

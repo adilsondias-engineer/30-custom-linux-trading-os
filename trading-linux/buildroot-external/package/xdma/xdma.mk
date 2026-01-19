@@ -10,7 +10,7 @@ XDMA_VERSION = $(call qstrip,$(BR2_PACKAGE_XDMA_VERSION))
 XDMA_LOCAL_DIR = /work/tos/dma_ip_drivers
 
 # Use local method - point to package directory with dummy file
-# Since files are already extracted, they are copied in BUILD_CMDS
+# Since files are already extracted, we'll copy them in BUILD_CMDS
 XDMA_SITE = $(BR2_EXTERNAL_TRADING_PATH)/package/xdma
 XDMA_SOURCE = dummy
 XDMA_SITE_METHOD = local

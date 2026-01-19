@@ -1,0 +1,32 @@
+[Unit]
+Description=Weston Wayland Compositor
+Documentation=man:weston(1) man:weston.ini(5)
+After=systemd-user-sessions.service systemd-tmpfiles-setup.service weston-setup.service seatd.service
+Requires=nvidia-modules.service weston-setup.service
+Wants=seatd.service
+After=nvidia-modules.service
+
+[Service]
+Type=simple
+User=trading
+Group=trading
+
+# Set environment for NVIDIA (Wayland)
+Environment="XDG_RUNTIME_DIR=/run/user/1000"
+# EGL_PLATFORM: For Wayland, EGL auto-detects, but we can explicitly set it
+# Note: "drm" is for KMSDRM, "wayland" is for Wayland compositor
+Environment="EGL_PLATFORM=wayland"
+Environment="__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json"
+Environment="__GLX_VENDOR_LIBRARY_NAME=nvidia"
+
+# Use user-writable log location (Weston will create it)
+# /var/log requires root, so use home directory instead
+# Desktop shell for interactive use (terminal, manual app launching)
+ExecStart=/usr/bin/weston --shell=desktop --backend=drm-backend.so --log=/home/trading/.var/log/weston.log
+
+# Restart on failure
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target

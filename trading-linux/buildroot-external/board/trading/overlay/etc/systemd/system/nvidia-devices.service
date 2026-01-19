@@ -1,0 +1,13 @@
+[Unit]
+Description=Create NVIDIA device nodes
+After=systemd-udev-settle.service
+Wants=systemd-udev-settle.service
+
+[Service]
+Type=oneshot
+# Trigger udev to create device nodes for NVIDIA
+ExecStart=/bin/sh -c 'udevadm trigger --subsystem-match=char --action=add || true; sleep 1; if [ ! -c /dev/nvidiactl ]; then for i in 0 1 2 3 4 5 6 7 8 9; do if [ ! -c /dev/nvidia$i ]; then mknod -m 666 /dev/nvidia$i c 195 $i 2>/dev/null || true; fi; done; mknod -m 666 /dev/nvidiactl c 195 255 2>/dev/null || true; mknod -m 666 /dev/nvidia-uvm c 195 253 2>/dev/null || true; mknod -m 666 /dev/nvidia-modeset c 195 254 2>/dev/null || true; fi'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

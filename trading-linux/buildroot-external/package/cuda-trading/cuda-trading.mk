@@ -15,7 +15,7 @@ CUDA_TRADING_LOCAL_EXTRACTED = /usr/local/cuda-13.1
 CUDA_HOST_DIR = /usr/local/cuda-13.1
 
 # Use local method - point to package directory with dummy file
-# Since files are already extracted, they are copied in BUILD_CMDS
+# Since files are already extracted, we'll copy them in BUILD_CMDS
 CUDA_TRADING_SITE = $(BR2_EXTERNAL_TRADING_PATH)/package/cuda-trading
 CUDA_TRADING_SOURCE = dummy
 CUDA_TRADING_SITE_METHOD = local
@@ -37,7 +37,7 @@ define CUDA_TRADING_BUILD_CMDS
 		exit 1; \
 	fi
 	# build.sh copies from host CUDA targets directory
-	# If targets directory structure exists, copy from there
+	# If we have targets directory structure, copy from there
 	if [ -d "$(CUDA_HOST_DIR)/targets/x86_64-linux/include" ]; then \
 		mkdir -p $(@D)/include && \
 		cp -r $(CUDA_HOST_DIR)/targets/x86_64-linux/include/* $(@D)/include/ 2>/dev/null || true; \

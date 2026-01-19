@@ -1,0 +1,19 @@
+[Unit]
+Description=Weston Runtime Directory Setup
+After=local-fs.target systemd-tmpfiles-setup.service
+Before=weston.service
+# Ensure filesystem is mounted and tmpfiles.d has run first
+Wants=systemd-tmpfiles-setup.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Clean up any stale Wayland sockets and lock files from previous runs
+ExecStart=/bin/sh -c 'rm -f /run/user/1000/wayland-* || true'
+# Create runtime directory with proper permissions (fallback if tmpfiles.d didn't create it)
+ExecStart=/bin/sh -c 'mkdir -p /run/user/1000 && chown trading:trading /run/user/1000 && chmod 700 /run/user/1000 || true'
+# Create log directory in home (should be writable, but ensure it exists)
+ExecStart=/bin/sh -c 'mkdir -p /home/trading/.var/log && chown trading:trading /home/trading/.var/log && chmod 755 /home/trading/.var/log || true'
+
+[Install]
+WantedBy=multi-user.target

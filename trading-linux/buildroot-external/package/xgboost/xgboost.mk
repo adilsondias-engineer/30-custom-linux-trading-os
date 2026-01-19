@@ -45,11 +45,11 @@ define XGBOOST_BUILD_CMDS
 endef
 
 # Install XGBoost library
-# build.sh already installs to BUILDROOT_TARGET/opt/xgboost (set to $(TARGET_DIR))
-# and also copies to sysroot. ld.so.conf must be created.
+# build.sh already installs to BUILDROOT_TARGET/opt/xgboost (which we set to $(TARGET_DIR))
+# and also copies to sysroot. We just need to ensure ld.so.conf is created.
 define XGBOOST_INSTALL_TARGET_CMDS
 	# build.sh installs to BUILDROOT_TARGET/opt/xgboost (line 159-163)
-	# BUILDROOT_TARGET=$(TARGET_DIR) is set in BUILD_CMDS, so files should be there
+	# We set BUILDROOT_TARGET=$(TARGET_DIR) in BUILD_CMDS, so files should be there
 	# Verify installation
 	if [ ! -f "$(TARGET_DIR)/opt/xgboost/lib/libxgboost.so" ]; then \
 		echo "Warning: XGBoost library not found, checking build directory"; \

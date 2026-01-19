@@ -26,7 +26,7 @@
         },
         "p26": {
             "name": "Execution Engine",
-            "executable": "/opt/trading/bin/order_execution",
+            "executable": "/opt/trading/bin/order_execution_engine",
             "config": "/opt/trading/config/p26_config.json",
             "working_dir": "/opt/trading",
             "cpu_core": 17,

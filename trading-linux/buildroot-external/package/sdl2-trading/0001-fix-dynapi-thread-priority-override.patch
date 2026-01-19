@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Trading System <trading@system>
+Date: Mon, 01 Jan 2025 00:00:00 +0000
+Subject: [PATCH] Remove dynapi override for SDL_LinuxSetThreadPriorityAndPolicy
+
+The dynapi override header defines a macro redirecting
+SDL_LinuxSetThreadPriorityAndPolicy to SDL_LinuxSetThreadPriorityAndPolicy_REAL,
+but the REAL function is not declared/defined, causing compilation errors:
+  error: implicit declaration of function 'SDL_LinuxSetThreadPriorityAndPolicy_REAL'
+
+Remove this override entirely. The function will be called directly without
+the dynapi wrapper, which is fine for this use case.
+
+---
+ src/dynapi/SDL_dynapi_overrides.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/dynapi/SDL_dynapi_overrides.h b/src/dynapi/SDL_dynapi_overrides.h
+index 0000000..1111111 100644
+--- a/src/dynapi/SDL_dynapi_overrides.h
++++ b/src/dynapi/SDL_dynapi_overrides.h
+@@ -820,7 +820,6 @@ extern DECLSPEC int SDLCALL SDL_GetTicks64_REAL(void);
+ #define SDL_GetWindowICCProfile SDL_GetWindowICCProfile_REAL
+ #define SDL_GetTicks64 SDL_GetTicks64_REAL
+-#define SDL_LinuxSetThreadPriorityAndPolicy SDL_LinuxSetThreadPriorityAndPolicy_REAL
+ #define SDL_GameControllerGetAppleSFSymbolsNameForButton SDL_GameControllerGetAppleSFSymbolsNameForButton_REAL
+ #define SDL_GameControllerGetAppleSFSymbolsNameForAxis SDL_GameControllerGetAppleSFSymbolsNameForAxis_REAL

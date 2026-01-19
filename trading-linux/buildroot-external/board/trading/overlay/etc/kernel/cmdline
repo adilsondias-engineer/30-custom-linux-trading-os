@@ -5,3 +5,8 @@ mitigations=off
 transparent_hugepage=never
 # IOMMU/VFIO support for DPDK kernel bypass (required for vfio-pci)
 intel_iommu=on iommu=pt
+# NVIDIA DRM/KMS support - enables high-res console and DRM/KMS for SDL2
+# With modeset=1, NVIDIA DRM will take over console from EFI framebuffer when module loads
+# With fbdev=1, NVIDIA provides its own /dev/fb0 (fixes SDL2 KMSDRM detection)
+nvidia-drm.modeset=1 nvidia-drm.fbdev=1
+# Note: EFI framebuffer is kept for early boot console, NVIDIA takes over when nvidia-drm loads

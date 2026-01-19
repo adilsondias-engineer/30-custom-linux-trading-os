@@ -1,0 +1,23 @@
+config BR2_PACKAGE_SDL2_TRADING
+	bool "SDL2 (Trading OS custom - from local source)"
+	select BR2_PACKAGE_LIBDRM
+	# NOTE: libgbm is NOT selected - we use NVIDIA's GBM, not Mesa's
+	# Mesa's software EGL/GBM conflicts with NVIDIA's hardware-accelerated implementation
+	help
+	  SDL2 library built from local source at /work/tos/SDL.
+	  
+	  This custom build ensures proper DRM/KMS support for NVIDIA drivers.
+	  Built with:
+	  - --enable-video-kmsdrm (DRM/KMS video driver - CRITICAL for NVIDIA)
+	  - --enable-video-dummy (fallback driver)
+	  - --disable-video-x11 (no X11)
+	  - --disable-video-wayland (no Wayland)
+	  - --disable-video-opengl (no OpenGL, use software rendering)
+	  
+	  REQUIRES LOCAL SOURCE:
+	  - /work/tos/SDL (SDL2 source directory)
+	  
+	  Note: SDL2_image and SDL2_ttf are provided by Buildroot's standard
+	  packages and will work with this custom SDL2 build.
+	  
+	  https://www.libsdl.org/

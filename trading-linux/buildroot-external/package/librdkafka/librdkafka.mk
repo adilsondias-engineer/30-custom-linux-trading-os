@@ -48,7 +48,7 @@ LIBRDKAFKA_CONF_OPTS += \
 	--disable-lz4-ext
 
 # librdkafka uses mklove (custom build system), not autotools
-# Configure, build, and install commands must be defined manually
+# We need to define configure, build, and install commands manually
 # mklove configure doesn't use standard autotools options
 define LIBRDKAFKA_CONFIGURE_CMDS
 	cd $(@D) && \

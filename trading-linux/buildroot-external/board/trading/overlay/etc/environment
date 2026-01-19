@@ -1,7 +1,14 @@
 # System-wide environment variables
 # This file is read by systemd services and PAM sessions
 
-# SDL2 environment variables for KMSDRM support
-SDL_VIDEODRIVER=kmsdrm
+# SDL2 environment variables for Wayland support (NVIDIA hardware acceleration)
+# Note: Wayland is set via /etc/profile.d/sdl2-wayland.sh for interactive shells
+# This file is for systemd services that don't source profile.d
+SDL_VIDEODRIVER=wayland
 SDL_RENDER_DRIVER=opengles2
+LD_LIBRARY_PATH=/usr/lib64:/usr/lib
 
+# EGL/GLVND configuration for NVIDIA
+__EGL_VENDOR_LIBRARY_DIRS=/usr/share/glvnd/egl_vendor.d
+__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS=/usr/share/egl/egl_external_platform.d
+EGL_PLATFORM=wayland

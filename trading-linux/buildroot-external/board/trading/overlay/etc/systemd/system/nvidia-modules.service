@@ -1,0 +1,20 @@
+[Unit]
+Description=Load NVIDIA kernel modules
+After=systemd-udev-settle.service
+Before=graphical.target display-manager.service
+Wants=systemd-udev-settle.service
+
+[Service]
+Type=oneshot
+# Load NVIDIA modules in correct order
+# nvidia must load first, then nvidia-modeset, then nvidia-drm
+ExecStart=/bin/sh -c 'modprobe nvidia && modprobe nvidia-modeset && modprobe nvidia-drm modeset=1 fbdev=1 && modprobe nvidia-uvm || true'
+# Also ensure modules are loaded even if modprobe fails silently
+ExecStartPost=/bin/sh -c 'sleep 1; lsmod | grep -q "^nvidia " || modprobe nvidia || true'
+ExecStartPost=/bin/sh -c 'lsmod | grep -q "^nvidia_modeset " || modprobe nvidia-modeset || true'
+ExecStartPost=/bin/sh -c 'lsmod | grep -q "^nvidia_drm " || modprobe nvidia-drm modeset=1 fbdev=1 || true'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=graphical.target

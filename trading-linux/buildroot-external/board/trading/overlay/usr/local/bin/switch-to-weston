@@ -1,0 +1,26 @@
+#!/bin/sh
+# Enable/start Weston compositor
+# Usage: sudo switch-to-weston
+#
+# Note: Weston is the primary Wayland compositor for this system
+#       as it works with NVIDIA proprietary drivers.
+#       Sway was removed due to NVIDIA compatibility issues.
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Error: This script must be run as root (use sudo)"
+    exit 1
+fi
+
+echo "Enabling Weston compositor..."
+echo ""
+
+# Enable and start Weston
+systemctl enable weston.service
+systemctl start weston.service
+
+echo "✓ Weston enabled and started"
+echo ""
+echo "Weston provides basic window management compatible with NVIDIA drivers."
+echo "For advanced window management, consider using X11 with a lightweight"
+echo "window manager (e.g., i3, openbox) if needed."
+echo ""
